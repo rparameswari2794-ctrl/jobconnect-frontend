@@ -12,7 +12,7 @@ import ResetPassword from "@/pages/auth/ResetPassword";
 
 /* ================= JOB SEEKER ================= */
 
-import JobseekerDashboard from "@/pages/jobseeker/JobseekerDashboard";
+import JobseekerDashboard from "@/pages/jobseeker/JobSeekerDashboard";
 import FindJobs from "@/pages/jobseeker/FindJobs";
 import MyApplications from "@/pages/jobseeker/MyApplications";
 
@@ -21,7 +21,7 @@ import ProfileDocuments from "@/pages/jobseeker/ProfileDocuments";
 import ProfileReview from "@/pages/jobseeker/ProfileReview";
 import CompletedProfile from "@/pages/jobseeker/CompletedProfile";
 import JobseekerApplicationDetails
-    from "@/pages/jobseeker/JobseekerApplicationDetails";
+    from "@/pages/jobseeker/JobSeekerApplicationDetails";
 import JobDetails from "@/pages/jobseeker/JobDetails";
 
 
