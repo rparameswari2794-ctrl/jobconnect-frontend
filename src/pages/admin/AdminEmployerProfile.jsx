@@ -9,7 +9,22 @@ import {
     useLocation
 } from "react-router-dom";
 
+
+// =====================================================
+// API CONFIGURATION
+// =====================================================
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+const BACKEND_ORIGIN = API_BASE.replace(
+    /\/api\/?$/,
+    ""
+);
+
+
+// =====================================================
+// COMPONENT
+// =====================================================
 
 function AdminEmployerProfile() {
 
@@ -22,9 +37,13 @@ function AdminEmployerProfile() {
     const fromPage =
         location.state?.from || "verification";
 
+
     const [profile, setProfile] = useState(null);
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState("");
+
 
     // =====================================================
     // MEDIA URL
@@ -36,6 +55,8 @@ function AdminEmployerProfile() {
             return "";
         }
 
+
+        // Already an absolute URL
         if (
             url.startsWith("http://") ||
             url.startsWith("https://")
@@ -43,12 +64,16 @@ function AdminEmployerProfile() {
             return url;
         }
 
+
+        // Django media path
         if (url.startsWith("/")) {
-            return `http://localhost:8000${url}`;
+            return `${BACKEND_ORIGIN}${url}`;
         }
 
-        return `http://localhost:8000/${url}`;
+
+        return `${BACKEND_ORIGIN}/${url}`;
     }
+
 
     // =====================================================
     // LOAD PROFILE
@@ -56,14 +81,18 @@ function AdminEmployerProfile() {
 
     useEffect(() => {
 
-        loadProfile();
+        if (id) {
+            loadProfile();
+        }
 
     }, [id]);
+
 
     async function loadProfile() {
 
         const token =
             localStorage.getItem("jc_token");
+
 
         if (!token) {
 
@@ -76,35 +105,42 @@ function AdminEmployerProfile() {
             return;
         }
 
+
         try {
 
             setLoading(true);
+
             setError("");
 
-            const response = await fetch(
-                `${API_BASE}/admin/employers/${id}/`,
-                {
-                    method: "GET",
 
-                    headers: {
-                        Authorization:
-                            `Bearer ${token}`,
+            const response =
+                await fetch(
+                    `${API_BASE}/admin/employers/${id}/`,
+                    {
+                        method: "GET",
 
-                        "Content-Type":
-                            "application/json",
-                    },
-                }
-            );
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+
+                            "Content-Type":
+                                "application/json",
+                        },
+                    }
+                );
+
 
             const data =
                 await response
                     .json()
                     .catch(() => ({}));
 
+
             console.log(
                 "ADMIN EMPLOYER PROFILE:",
                 data
             );
+
 
             if (!response.ok) {
 
@@ -115,7 +151,9 @@ function AdminEmployerProfile() {
                 );
             }
 
+
             setProfile(data);
+
 
         } catch (err) {
 
@@ -124,16 +162,19 @@ function AdminEmployerProfile() {
                 err
             );
 
+
             setError(
                 err.message ||
                 "Unable to load employer profile."
             );
+
 
         } finally {
 
             setLoading(false);
         }
     }
+
 
     // =====================================================
     // DATE
@@ -145,7 +186,21 @@ function AdminEmployerProfile() {
             return "—";
         }
 
-        return new Date(date).toLocaleDateString(
+
+        const parsedDate =
+            new Date(date);
+
+
+        if (
+            Number.isNaN(
+                parsedDate.getTime()
+            )
+        ) {
+            return "—";
+        }
+
+
+        return parsedDate.toLocaleDateString(
             "en-IN",
             {
                 day: "2-digit",
@@ -154,6 +209,7 @@ function AdminEmployerProfile() {
             }
         );
     }
+
 
     // =====================================================
     // STATUS
@@ -165,16 +221,38 @@ function AdminEmployerProfile() {
             String(status || "")
                 .toLowerCase();
 
+
         if (value === "approved") {
             return "admin-profile-status approved";
         }
+
 
         if (value === "rejected") {
             return "admin-profile-status rejected";
         }
 
+
         return "admin-profile-status pending";
     }
+
+
+    // =====================================================
+    // BACK NAVIGATION
+    // =====================================================
+
+    function handleBack() {
+
+        if (fromPage === "users") {
+
+            navigate("/admin/users");
+
+            return;
+        }
+
+
+        navigate("/admin/verifications");
+    }
+
 
     // =====================================================
     // LOADING
@@ -183,19 +261,24 @@ function AdminEmployerProfile() {
     if (loading) {
 
         return (
+
             <div className="admin-dashboard">
 
                 <main className="admin-main">
 
                     <div className="admin-empty-state">
+
                         Loading employer profile...
+
                     </div>
 
                 </main>
 
             </div>
+
         );
     }
+
 
     // =====================================================
     // ERROR
@@ -204,53 +287,98 @@ function AdminEmployerProfile() {
     if (error) {
 
         return (
+
             <div className="admin-dashboard">
 
                 <main className="admin-main">
 
                     <div className="verification-empty verification-error">
+
                         {error}
+
                     </div>
+
 
                     <button
                         type="button"
                         className="admin-back-button"
-                        onClick={() => {
-
-                            if (fromPage === "users") {
-
-                                navigate("/admin/users");
-
-                                return;
-                            }
-
-                            navigate("/admin/verifications");
-                        }}
+                        onClick={handleBack}
                     >
+
                         {fromPage === "users"
                             ? "← Back to Users"
                             : "← Back to Verification Queue"
                         }
+
                     </button>
+
                 </main>
 
             </div>
+
         );
     }
 
+
+    // =====================================================
+    // NO PROFILE
+    // =====================================================
+
     if (!profile) {
-        return null;
+
+        return (
+
+            <div className="admin-dashboard">
+
+                <main className="admin-main">
+
+                    <div className="verification-empty">
+
+                        Employer profile not found.
+
+                    </div>
+
+
+                    <button
+                        type="button"
+                        className="admin-back-button"
+                        onClick={handleBack}
+                    >
+
+                        {fromPage === "users"
+                            ? "← Back to Users"
+                            : "← Back to Verification Queue"
+                        }
+
+                    </button>
+
+                </main>
+
+            </div>
+
+        );
     }
+
+
+    // =====================================================
+    // APPROVAL STATUS
+    // =====================================================
 
     const approvalStatus =
         String(
             profile.approval_status || "pending"
         ).toLowerCase();
 
+
+    // =====================================================
+    // DOCUMENTS
+    // =====================================================
+
     const documents =
         Array.isArray(profile.documents)
             ? profile.documents
             : [];
+
 
     // =====================================================
     // PAGE
@@ -262,6 +390,7 @@ function AdminEmployerProfile() {
 
             <main className="admin-main admin-employer-profile-page">
 
+
                 {/* =================================================
                     HEADER
                 ================================================= */}
@@ -270,7 +399,8 @@ function AdminEmployerProfile() {
 
                     <div className="admin-employer-header-left">
 
-                        {/* LOGO */}
+
+                        {/* COMPANY LOGO */}
 
                         <div className="admin-company-logo">
 
@@ -284,16 +414,27 @@ function AdminEmployerProfile() {
                                         profile.company_name ||
                                         "Company logo"
                                     }
-                                    onError={(e) => {
-                                        e.currentTarget.style.display =
+                                    onError={(event) => {
+
+                                        event.currentTarget.style.display =
                                             "none";
 
-                                        e.currentTarget.nextElementSibling.style.display =
-                                            "flex";
+                                        if (
+                                            event.currentTarget
+                                                .nextElementSibling
+                                        ) {
+
+                                            event.currentTarget
+                                                .nextElementSibling
+                                                .style.display =
+                                                "flex";
+                                        }
+
                                     }}
                                 />
 
                             ) : null}
+
 
                             <div
                                 className="admin-company-logo-placeholder"
@@ -304,7 +445,9 @@ function AdminEmployerProfile() {
                                             : "flex"
                                 }}
                             >
+
                                 🏢
+
                             </div>
 
                         </div>
@@ -321,6 +464,7 @@ function AdminEmployerProfile() {
                                         "Employer Profile"}
                                 </h1>
 
+
                                 <span
                                     className={
                                         getStatusClass(
@@ -328,14 +472,19 @@ function AdminEmployerProfile() {
                                         )
                                     }
                                 >
+
                                     {approvalStatus}
+
                                 </span>
 
                             </div>
 
+
                             <p>
+
                                 Review the submitted company
                                 information before verification.
+
                             </p>
 
                         </div>
@@ -371,6 +520,9 @@ function AdminEmployerProfile() {
 
                     <div className="admin-profile-grid">
 
+
+                        {/* COMPANY NAME */}
+
                         <div className="admin-profile-field">
 
                             <label>
@@ -383,6 +535,8 @@ function AdminEmployerProfile() {
 
                         </div>
 
+
+                        {/* COMPANY EMAIL */}
 
                         <div className="admin-profile-field">
 
@@ -399,6 +553,8 @@ function AdminEmployerProfile() {
                         </div>
 
 
+                        {/* PHONE */}
+
                         <div className="admin-profile-field">
 
                             <label>
@@ -411,6 +567,8 @@ function AdminEmployerProfile() {
 
                         </div>
 
+
+                        {/* WEBSITE */}
 
                         <div className="admin-profile-field">
 
@@ -431,19 +589,25 @@ function AdminEmployerProfile() {
                                                 : `https://${profile.website}`
                                         }
                                         target="_blank"
-                                        rel="noreferrer"
+                                        rel="noopener noreferrer"
                                     >
+
                                         {profile.website}
+
                                     </a>
 
                                 ) : (
+
                                     "—"
+
                                 )}
 
                             </div>
 
                         </div>
 
+
+                        {/* LOCATION */}
 
                         <div className="admin-profile-field">
 
@@ -460,7 +624,7 @@ function AdminEmployerProfile() {
                     </div>
 
 
-                    {/* DESCRIPTION */}
+                    {/* COMPANY DESCRIPTION */}
 
                     <div className="admin-profile-description">
 
@@ -503,6 +667,9 @@ function AdminEmployerProfile() {
 
                     <div className="admin-profile-grid">
 
+
+                        {/* REPRESENTATIVE NAME */}
+
                         <div className="admin-profile-field">
 
                             <label>
@@ -515,6 +682,8 @@ function AdminEmployerProfile() {
 
                         </div>
 
+
+                        {/* REPRESENTATIVE EMAIL */}
 
                         <div className="admin-profile-field">
 
@@ -612,6 +781,7 @@ function AdminEmployerProfile() {
                                         className="admin-document-item"
                                         key={
                                             document.name ||
+                                            document.url ||
                                             index
                                         }
                                     >
@@ -636,16 +806,28 @@ function AdminEmployerProfile() {
                                         </div>
 
 
-                                        <a
-                                            href={getMediaUrl(
-                                                document.url
-                                            )}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="admin-document-button"
-                                        >
-                                            View Document
-                                        </a>
+                                        {document.url ? (
+
+                                            <a
+                                                href={getMediaUrl(
+                                                    document.url
+                                                )}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="admin-document-button"
+                                            >
+
+                                                View Document
+
+                                            </a>
+
+                                        ) : (
+
+                                            <span>
+                                                No file available
+                                            </span>
+
+                                        )}
 
                                     </div>
 
@@ -698,6 +880,9 @@ function AdminEmployerProfile() {
 
                     <div className="admin-verification-details">
 
+
+                        {/* PROFILE COMPLETED */}
+
                         <div>
 
                             <span>
@@ -711,13 +896,17 @@ function AdminEmployerProfile() {
                                         : "text-danger"
                                 }
                             >
+
                                 {profile.profile_completed
                                     ? "Yes"
                                     : "No"}
+
                             </strong>
 
                         </div>
 
+
+                        {/* APPROVAL STATUS */}
 
                         <div>
 
@@ -732,11 +921,15 @@ function AdminEmployerProfile() {
                                     )
                                 }
                             >
+
                                 {approvalStatus}
+
                             </strong>
 
                         </div>
 
+
+                        {/* SUBMITTED */}
 
                         <div>
 
@@ -752,6 +945,8 @@ function AdminEmployerProfile() {
 
                         </div>
 
+
+                        {/* LAST UPDATED */}
 
                         <div>
 
@@ -780,22 +975,14 @@ function AdminEmployerProfile() {
 
                     <button
                         type="button"
-                        onClick={() => {
-
-                            if (fromPage === "users") {
-
-                                navigate("/admin/users");
-
-                                return;
-                            }
-
-                            navigate("/admin/verifications");
-                        }}
+                        onClick={handleBack}
                     >
+
                         {fromPage === "users"
                             ? "← Back to Users"
                             : "← Back to Verification Queue"
                         }
+
                     </button>
 
                 </div>
@@ -805,5 +992,6 @@ function AdminEmployerProfile() {
         </div>
     );
 }
+
 
 export default AdminEmployerProfile;

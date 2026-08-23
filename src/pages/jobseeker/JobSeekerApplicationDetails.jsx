@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-const API_BASE = "http://localhost:8000/api/auth/jobseeker/";
+const API_BASE =
+    `${import.meta.env.VITE_API_BASE_URL}/auth/jobseeker/`;
 
 function JobseekerApplicationDetails() {
     const { applicationId } = useParams();

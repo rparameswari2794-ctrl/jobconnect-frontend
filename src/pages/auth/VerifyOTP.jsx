@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function VerifyOTP() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -31,7 +33,7 @@ function VerifyOTP() {
             setLoading(true);
 
             const response = await fetch(
-                "http://localhost:8000/api/auth/verify-otp/",
+                `${API_BASE}/auth/verify-otp/`,
                 {
                     method: "POST",
 

@@ -11,6 +11,8 @@ function JobseekerSignup() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -40,7 +42,7 @@ function JobseekerSignup() {
 
         /* =====================================================
            EMAIL VALIDATION
-           
+
            Only:
            gmail.com
            yahoo.com
@@ -62,7 +64,7 @@ function JobseekerSignup() {
 
         /* =====================================================
            PASSWORD VALIDATION
-           
+
            Requirements:
            - Minimum 8 characters
            - At least 1 capital letter
@@ -160,15 +162,6 @@ function JobseekerSignup() {
                     responseText
                 );
 
-
-                /*
-                 * Django returned HTML instead of JSON.
-                 *
-                 * Usually this means:
-                 * - wrong API URL
-                 * - Django 404
-                 * - Django server error
-                 */
 
                 if (response.status === 404) {
 
@@ -411,18 +404,48 @@ function JobseekerSignup() {
                         </label>
 
 
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) =>
-                                setPassword(e.target.value)
-                            }
-                            minLength={8}
-                            disabled={loading}
-                            required
-                        />
+                        <div className="password-input-wrapper">
+
+                            <input
+                                id="password"
+                                type={
+                                    showPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(e.target.value)
+                                }
+                                minLength={8}
+                                disabled={loading}
+                                required
+                            />
+
+
+                            <button
+                                type="button"
+                                className="password-eye-button"
+                                onClick={() =>
+                                    setShowPassword(
+                                        (prev) => !prev
+                                    )
+                                }
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+
+                                {showPassword
+                                    ? "🙈"
+                                    : "👁️"}
+
+                            </button>
+
+                        </div>
 
 
                         <small>
@@ -492,7 +515,6 @@ function JobseekerSignup() {
             </div>
 
         </div>
-
     );
 }
 

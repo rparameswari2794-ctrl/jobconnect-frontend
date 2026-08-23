@@ -9974,3 +9974,29 @@ body {
 
 .profile-cancel-button{margin-right: 10px;border: 1px solid blue;color: blue;padding: 5px;}
 .profile-save-button{margin-left: 10px;border: 1px solid green;color: darkgreen;padding: 5px;background-color: white;}
+.password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-input-wrapper input {
+    width: 100%;
+    padding-right: 48px;
+}
+
+.password-eye-button {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 4px;
+    line-height: 1;
+}
+
+.password-eye-button:focus {
+    outline: none;
+}

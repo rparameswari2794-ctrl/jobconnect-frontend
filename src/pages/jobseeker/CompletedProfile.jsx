@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:8000/api/auth/jobseeker/";
+const API_BASE =
+    `${import.meta.env.VITE_API_BASE_URL}/auth/jobseeker/`;
+
+const BACKEND_ORIGIN =
+    import.meta.env.VITE_API_BASE_URL.replace(
+        /\/api\/?$/,
+        ""
+    );
 
 const PROFILE_API = `${API_BASE}profile/`;
 const EDUCATION_API = `${API_BASE}education/`;
@@ -43,6 +50,7 @@ function CompletedProfile() {
     // =====================================================
 
     function getMediaUrl(url) {
+
         if (!url) return "";
 
         if (
@@ -53,10 +61,10 @@ function CompletedProfile() {
         }
 
         if (url.startsWith("/")) {
-            return `http://localhost:8000${url}`;
+            return `${BACKEND_ORIGIN}${url}`;
         }
 
-        return `http://localhost:8000/${url}`;
+        return `${BACKEND_ORIGIN}/${url}`;
     }
 
     // =====================================================
@@ -311,8 +319,6 @@ function CompletedProfile() {
             setForm({
                 headline:
                     profile?.headline || "",
-
-            
 
                 skills:
                     profile?.skills || "",
@@ -1303,7 +1309,6 @@ function CompletedProfile() {
                                 </p>
                             </div>
 
-                            
                             <div className="profile-detail-item">
                                 <label>
                                     Skills
@@ -2073,10 +2078,6 @@ function CompletedProfile() {
                                                 />
 
                                             </div>
-
-                                            
-
-                                        
 
                                             <div className="form-group">
 

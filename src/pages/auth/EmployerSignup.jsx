@@ -12,6 +12,8 @@ function EmployerSignup() {
     const [workEmail, setWorkEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
@@ -264,19 +266,47 @@ function EmployerSignup() {
                         </label>
 
 
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) =>
-                                setPassword(
-                                    e.target.value
-                                )
-                            }
-                            minLength={8}
-                            required
-                        />
+                        <div className="password-input-wrapper">
+
+                            <input
+                                id="password"
+                                type={
+                                    showPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(
+                                        e.target.value
+                                    )
+                                }
+                                minLength={8}
+                                required
+                            />
+
+
+                            <button
+                                type="button"
+                                className="password-eye-button"
+                                onClick={() =>
+                                    setShowPassword(
+                                        (prev) => !prev
+                                    )
+                                }
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {showPassword
+                                    ? "🙈"
+                                    : "👁️"}
+                            </button>
+
+                        </div>
 
 
                         <small>

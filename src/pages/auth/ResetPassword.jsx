@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function ResetPassword() {
     const location = useLocation();
     const navigate = useNavigate();
@@ -11,6 +13,9 @@ function ResetPassword() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -52,7 +57,7 @@ function ResetPassword() {
             setLoading(true);
 
             const response = await fetch(
-                "http://localhost:8000/api/auth/reset-password/",
+                `${API_BASE}/auth/reset-password/`,
                 {
                     method: "POST",
 
@@ -131,24 +136,62 @@ function ResetPassword() {
 
                 <form onSubmit={handleSubmit}>
 
+                    {/* =================================================
+                        NEW PASSWORD
+                    ================================================= */}
+
                     <div className="form-group">
 
                         <label htmlFor="newPassword">
                             New Password
                         </label>
 
-                        <input
-                            id="newPassword"
-                            type="password"
-                            placeholder="Enter new password"
-                            value={newPassword}
-                            onChange={(e) =>
-                                setNewPassword(e.target.value)
-                            }
-                            required
-                        />
+                        <div className="password-input-wrapper">
+
+                            <input
+                                id="newPassword"
+                                type={
+                                    showNewPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                placeholder="Enter new password"
+                                value={newPassword}
+                                onChange={(e) =>
+                                    setNewPassword(
+                                        e.target.value
+                                    )
+                                }
+                                required
+                            />
+
+                            <button
+                                type="button"
+                                className="password-eye-button"
+                                onClick={() =>
+                                    setShowNewPassword(
+                                        (prev) => !prev
+                                    )
+                                }
+                                aria-label={
+                                    showNewPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {showNewPassword
+                                    ? "🙈"
+                                    : "👁️"}
+                            </button>
+
+                        </div>
 
                     </div>
+
+
+                    {/* =================================================
+                        CONFIRM PASSWORD
+                    ================================================= */}
 
                     <div className="form-group">
 
@@ -156,18 +199,52 @@ function ResetPassword() {
                             Confirm Password
                         </label>
 
-                        <input
-                            id="confirmPassword"
-                            type="password"
-                            placeholder="Confirm new password"
-                            value={confirmPassword}
-                            onChange={(e) =>
-                                setConfirmPassword(e.target.value)
-                            }
-                            required
-                        />
+                        <div className="password-input-wrapper">
+
+                            <input
+                                id="confirmPassword"
+                                type={
+                                    showConfirmPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                placeholder="Confirm new password"
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(
+                                        e.target.value
+                                    )
+                                }
+                                required
+                            />
+
+                            <button
+                                type="button"
+                                className="password-eye-button"
+                                onClick={() =>
+                                    setShowConfirmPassword(
+                                        (prev) => !prev
+                                    )
+                                }
+                                aria-label={
+                                    showConfirmPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+                                {showConfirmPassword
+                                    ? "🙈"
+                                    : "👁️"}
+                            </button>
+
+                        </div>
 
                     </div>
+
+
+                    {/* =================================================
+                        RESET BUTTON
+                    ================================================= */}
 
                     <button
                         type="submit"

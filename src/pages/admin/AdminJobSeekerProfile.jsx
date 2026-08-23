@@ -5,7 +5,22 @@ import {
     useLocation
 } from "react-router-dom";
 
+
+// =====================================================
+// API CONFIGURATION
+// =====================================================
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+const BACKEND_ORIGIN = API_BASE.replace(
+    /\/api\/?$/,
+    ""
+);
+
+
+// =====================================================
+// COMPONENT
+// =====================================================
 
 function AdminJobSeekerProfile() {
 
@@ -162,8 +177,10 @@ function AdminJobSeekerProfile() {
             );
 
 
-            // IMPORTANT:
-            // Look specifically at education and project data
+            // =================================================
+            // DEBUG DATA
+            // =================================================
+
             console.log(
                 "EDUCATION DATA:",
                 data.educations
@@ -218,7 +235,7 @@ function AdminJobSeekerProfile() {
 
 
     // =====================================================
-    // HELPERS
+    // DISPLAY VALUE
     // =====================================================
 
     function displayValue(value) {
@@ -289,6 +306,7 @@ function AdminJobSeekerProfile() {
         }
 
 
+        // Already an absolute URL
         if (
             file.startsWith("http://") ||
             file.startsWith("https://")
@@ -299,7 +317,15 @@ function AdminJobSeekerProfile() {
         }
 
 
-        return `http://localhost:8000${file}`;
+        // Django media/static path
+        if (file.startsWith("/")) {
+
+            return `${BACKEND_ORIGIN}${file}`;
+
+        }
+
+
+        return `${BACKEND_ORIGIN}/${file}`;
     }
 
 
@@ -750,16 +776,12 @@ function AdminJobSeekerProfile() {
                                             className="admin-education-card"
                                         >
 
-                                            {/* DEGREE */}
-
                                             <h3>
                                                 {displayValue(
                                                     education.degree
                                                 )}
                                             </h3>
 
-
-                                            {/* UNIVERSITY */}
 
                                             <p>
                                                 <strong>
@@ -774,8 +796,6 @@ function AdminJobSeekerProfile() {
                                             </p>
 
 
-                                            {/* COLLEGE */}
-
                                             <p>
                                                 <strong>
                                                     College
@@ -788,10 +808,6 @@ function AdminJobSeekerProfile() {
                                                 )}
                                             </p>
 
-
-                                            
-
-                                            {/* PASSING MONTH & YEAR */}
 
                                             <p>
                                                 <strong>
@@ -806,8 +822,6 @@ function AdminJobSeekerProfile() {
                                             </p>
 
 
-                                            {/* PERCENTAGE / CGPA */}
-
                                             <p>
                                                 <strong>
                                                     Percentage / CGPA
@@ -819,9 +833,6 @@ function AdminJobSeekerProfile() {
                                                     education.percentage_cgpa
                                                 )}
                                             </p>
-
-
-                                            
 
                                         </div>
 
@@ -869,16 +880,12 @@ function AdminJobSeekerProfile() {
                                             className="admin-experience-card"
                                         >
 
-                                            {/* JOB TITLE */}
-
                                             <h3>
                                                 {displayValue(
                                                     experience.job_title
                                                 )}
                                             </h3>
 
-
-                                            {/* COMPANY */}
 
                                             <p>
                                                 <strong>
@@ -893,8 +900,6 @@ function AdminJobSeekerProfile() {
                                             </p>
 
 
-                                            {/* EMPLOYMENT TYPE */}
-
                                             <p>
                                                 <strong>
                                                     Employment Type
@@ -908,8 +913,6 @@ function AdminJobSeekerProfile() {
                                             </p>
 
 
-                                            {/* START DATE */}
-
                                             <p>
                                                 <strong>
                                                     Start Date
@@ -922,8 +925,6 @@ function AdminJobSeekerProfile() {
                                                 )}
                                             </p>
 
-
-                                            {/* END DATE */}
 
                                             <p>
                                                 <strong>
@@ -940,8 +941,6 @@ function AdminJobSeekerProfile() {
                                                 }
                                             </p>
 
-
-                                            {/* DESCRIPTION */}
 
                                             <p>
                                                 <strong>
@@ -996,22 +995,6 @@ function AdminJobSeekerProfile() {
                                 {profile.projects.map(
                                     (project) => {
 
-                                        /*
-                                         * IMPORTANT:
-                                         *
-                                         * Your Project form uses:
-                                         *     title
-                                         *     project_type
-                                         *     technologies
-                                         *     project_url
-                                         *     description
-                                         *
-                                         * But your previous API response
-                                         * showed "name".
-                                         *
-                                         * Therefore support BOTH.
-                                         */
-
                                         const projectTitle =
                                             project.title ||
                                             project.name ||
@@ -1031,16 +1014,12 @@ function AdminJobSeekerProfile() {
                                                 className="admin-project-card"
                                             >
 
-                                                {/* PROJECT TITLE */}
-
                                                 <h3>
                                                     {displayValue(
                                                         projectTitle
                                                     )}
                                                 </h3>
 
-
-                                                {/* PROJECT TYPE */}
 
                                                 <p>
                                                     <strong>
@@ -1055,8 +1034,6 @@ function AdminJobSeekerProfile() {
                                                 </p>
 
 
-                                                {/* TECHNOLOGIES */}
-
                                                 <p>
                                                     <strong>
                                                         Technologies
@@ -1069,8 +1046,6 @@ function AdminJobSeekerProfile() {
                                                     )}
                                                 </p>
 
-
-                                                {/* PROJECT URL */}
 
                                                 <p>
                                                     <strong>
@@ -1105,8 +1080,6 @@ function AdminJobSeekerProfile() {
 
                                                 )}
 
-
-                                                {/* DESCRIPTION */}
 
                                                 <p>
                                                     <strong>
@@ -1334,7 +1307,6 @@ function AdminJobSeekerProfile() {
 
                 {/* =================================================
                     VERIFICATION INFORMATION
-                    DO NOT CHANGE
                 ================================================= */}
 
                 <section className="verification-queue-card">
@@ -1468,5 +1440,6 @@ function AdminJobSeekerProfile() {
 
     );
 }
+
 
 export default AdminJobSeekerProfile;

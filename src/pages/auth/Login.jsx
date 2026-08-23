@@ -1,7 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
 function Login() {
@@ -10,6 +9,8 @@ function Login() {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const [showPassword, setShowPassword] = useState(false);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -42,7 +43,7 @@ function Login() {
 
 
             // =====================================================
-            // JOB SEEKER LOGIN
+            // LOGIN
             // =====================================================
 
             const response = await fetch(
@@ -95,7 +96,6 @@ function Login() {
             const accessToken =
                 data.access;
 
-
             const refreshToken =
                 data.refresh;
 
@@ -128,6 +128,8 @@ function Login() {
             // =====================================================
 
             const user = data.user;
+
+
             localStorage.setItem(
                 "jc_token",
                 data.access
@@ -344,7 +346,10 @@ function Login() {
 
                 <form onSubmit={handleSubmit}>
 
-                    {/* EMAIL */}
+
+                    {/* =================================================
+                        EMAIL
+                    ================================================= */}
 
                     <div className="form-group">
 
@@ -352,13 +357,16 @@ function Login() {
                             EMAIL
                         </label>
 
+
                         <input
                             id="email"
                             type="email"
                             placeholder="you@example.com"
                             value={email}
                             onChange={(e) =>
-                                setEmail(e.target.value)
+                                setEmail(
+                                    e.target.value
+                                )
                             }
                             autoComplete="email"
                             required
@@ -367,7 +375,9 @@ function Login() {
                     </div>
 
 
-                    {/* PASSWORD */}
+                    {/* =================================================
+                        PASSWORD
+                    ================================================= */}
 
                     <div className="form-group">
 
@@ -375,22 +385,57 @@ function Login() {
                             PASSWORD
                         </label>
 
-                        <input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) =>
-                                setPassword(e.target.value)
-                            }
-                            autoComplete="current-password"
-                            required
-                        />
+
+                        <div className="password-input-wrapper">
+
+                            <input
+                                id="password"
+                                type={
+                                    showPassword
+                                        ? "text"
+                                        : "password"
+                                }
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) =>
+                                    setPassword(
+                                        e.target.value
+                                    )
+                                }
+                                autoComplete="current-password"
+                                required
+                            />
+
+
+                            <button
+                                type="button"
+                                className="password-eye-button"
+                                onClick={() =>
+                                    setShowPassword(
+                                        (prev) => !prev
+                                    )
+                                }
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
+                            >
+
+                                {showPassword
+                                    ? "🙈"
+                                    : "👁️"}
+
+                            </button>
+
+                        </div>
 
                     </div>
 
 
-                    {/* LOGIN */}
+                    {/* =================================================
+                        LOGIN
+                    ================================================= */}
 
                     <button
                         type="submit"
@@ -408,7 +453,9 @@ function Login() {
                 </form>
 
 
-                {/* FORGOT PASSWORD */}
+                {/* =================================================
+                    FORGOT PASSWORD
+                ================================================= */}
 
                 <div className="forgot-password">
 
@@ -419,7 +466,9 @@ function Login() {
                 </div>
 
 
-                {/* SIGNUP */}
+                {/* =================================================
+                    SIGNUP
+                ================================================= */}
 
                 <div className="signup-text">
 
@@ -437,7 +486,9 @@ function Login() {
                             Job seeker sign up
                         </Link>
 
+
                         <span>·</span>
+
 
                         <Link
                             className="employer-link"

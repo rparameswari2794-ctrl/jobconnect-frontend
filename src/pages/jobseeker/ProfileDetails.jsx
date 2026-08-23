@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE = "http://localhost:8000/api/auth/jobseeker/";
+const API_BASE =
+    `${import.meta.env.VITE_API_BASE_URL}/auth/jobseeker/`;
 
 const PROFILE_API = `${API_BASE}profile/`;
 const EDUCATION_API = `${API_BASE}education/`;

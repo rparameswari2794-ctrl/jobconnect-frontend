@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
+const BACKEND_ORIGIN = API_BASE.replace(/\/api\/?$/, "");
 
 function ApplicantProfile() {
 
@@ -141,7 +142,10 @@ function ApplicantProfile() {
 
         if (
             typeof file === "string" &&
-            file.startsWith("http")
+            (
+                file.startsWith("http://") ||
+                file.startsWith("https://")
+            )
         ) {
             return file;
         }
@@ -151,7 +155,11 @@ function ApplicantProfile() {
             typeof file === "string"
         ) {
 
-            return `http://localhost:8000${file}`;
+            if (file.startsWith("/")) {
+                return `${BACKEND_ORIGIN}${file}`;
+            }
+
+            return `${BACKEND_ORIGIN}/${file}`;
         }
 
 
@@ -1297,8 +1305,8 @@ function ApplicantProfile() {
 
 
                 {/* =================================================
-    EDUCATION
-================================================= */}
+                    EDUCATION
+                ================================================= */}
 
                 <section className="candidate-section">
 
@@ -1315,13 +1323,9 @@ function ApplicantProfile() {
                                 key={item.id || index}
                             >
 
-                                {/* DEGREE */}
-
                                 <h3>
                                     {item.degree || "Education"}
                                 </h3>
-
-                                {/* COLLEGE */}
 
                                 {item.college && (
 
@@ -1334,8 +1338,6 @@ function ApplicantProfile() {
 
                                 )}
 
-                                {/* UNIVERSITY */}
-
                                 {item.university && (
 
                                     <p>
@@ -1346,8 +1348,6 @@ function ApplicantProfile() {
                                     </p>
 
                                 )}
-
-                                {/* YEAR */}
 
                                 {(item.start_year || item.end_year) && (
 
@@ -1367,8 +1367,6 @@ function ApplicantProfile() {
 
                                 )}
 
-                                {/* PASSING MONTH/YEAR */}
-
                                 {item.passing_month_year && (
 
                                     <p>
@@ -1383,8 +1381,6 @@ function ApplicantProfile() {
 
                                 )}
 
-                                {/* PERCENTAGE / CGPA */}
-
                                 {item.percentage_cgpa && (
 
                                     <p>
@@ -1398,8 +1394,6 @@ function ApplicantProfile() {
                                     </p>
 
                                 )}
-
-                                {/* ACTIVITIES */}
 
                                 {item.activities && (
 
@@ -1429,9 +1423,10 @@ function ApplicantProfile() {
 
                 </section>
 
+
                 {/* =================================================
-    PROJECTS
-================================================= */}
+                    PROJECTS
+                ================================================= */}
 
                 <section className="candidate-section">
 
@@ -1469,7 +1464,6 @@ function ApplicantProfile() {
                                     </p>
                                 )}
 
-                                {/* PROJECT URL */}
 
                                 {project.project_url && (
                                     <p>
@@ -1500,6 +1494,7 @@ function ApplicantProfile() {
                     )}
 
                 </section>
+
 
                 {/* =================================================
                     DOCUMENTS

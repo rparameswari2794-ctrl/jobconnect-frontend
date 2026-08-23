@@ -2,6 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
+const BACKEND_ORIGIN = API_BASE.replace(
+    /\/api\/?$/,
+    ""
+);
+
 const PROFILE_API = `${API_BASE}/auth/employer/profile/`;
 
 
@@ -74,10 +80,10 @@ function EmployerProfile() {
         }
 
         if (url.startsWith("/")) {
-            return `http://localhost:8000${url}`;
+            return `${BACKEND_ORIGIN}${url}`;
         }
 
-        return `http://localhost:8000/${url}`;
+        return `${BACKEND_ORIGIN}/${url}`;
     }
 
 

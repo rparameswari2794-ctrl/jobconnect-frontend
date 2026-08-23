@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+const API_BASE = import.meta.env.VITE_API_BASE_URL;
+
 function ForgotPassword() {
 
     const [email, setEmail] = useState("");
@@ -12,10 +14,15 @@ function ForgotPassword() {
 
         e.preventDefault();
 
-        const cleanEmail = email.trim().toLowerCase();
+        const cleanEmail =
+            email.trim().toLowerCase();
 
         if (!cleanEmail) {
-            alert("Please enter your email address.");
+
+            alert(
+                "Please enter your email address."
+            );
+
             return;
         }
 
@@ -23,38 +30,50 @@ function ForgotPassword() {
 
             setLoading(true);
 
-            const response = await fetch(
-                "http://localhost:8000/api/auth/forgot-password/",
-                {
-                    method: "POST",
+            const response =
+                await fetch(
+                    `${API_BASE}/auth/forgot-password/`,
+                    {
+                        method: "POST",
 
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
+                        headers: {
+                            "Content-Type":
+                                "application/json",
+                        },
 
-                    body: JSON.stringify({
-                        email: cleanEmail,
-                    }),
-                }
-            );
+                        body: JSON.stringify({
+                            email: cleanEmail,
+                        }),
+                    }
+                );
 
-            // -------------------------------------------------
+
+            // =================================================
             // SAFELY READ RESPONSE
-            // -------------------------------------------------
+            // =================================================
 
             const contentType =
-                response.headers.get("content-type");
+                response.headers.get(
+                    "content-type"
+                );
 
             let data = {};
 
+
             if (
                 contentType &&
-                contentType.includes("application/json")
+                contentType.includes(
+                    "application/json"
+                )
             ) {
-                data = await response.json();
+
+                data =
+                    await response.json();
+
             } else {
 
-                const text = await response.text();
+                const text =
+                    await response.text();
 
                 console.error(
                     "SERVER RETURNED NON-JSON:",
@@ -62,13 +81,14 @@ function ForgotPassword() {
                 );
 
                 throw new Error(
-                    "Server error. Please check the Django terminal."
+                    "Server error. Please try again."
                 );
             }
 
-            // -------------------------------------------------
+
+            // =================================================
             // ERROR RESPONSE
-            // -------------------------------------------------
+            // =================================================
 
             if (!response.ok) {
 
@@ -79,9 +99,10 @@ function ForgotPassword() {
                 );
             }
 
-            // -------------------------------------------------
+
+            // =================================================
             // CHECK ROLE
-            // -------------------------------------------------
+            // =================================================
 
             if (
                 data.role !== "jobseeker" &&
@@ -93,22 +114,25 @@ function ForgotPassword() {
                 );
             }
 
-            // -------------------------------------------------
+
+            // =================================================
             // SUCCESS MESSAGE
-            // -------------------------------------------------
+            // =================================================
 
             const accountType =
                 data.role === "employer"
                     ? "Employer"
                     : "Job Seeker";
 
+
             alert(
                 `OTP has been sent to your registered ${accountType} email.`
             );
 
-            // -------------------------------------------------
+
+            // =================================================
             // GO TO VERIFY OTP
-            // -------------------------------------------------
+            // =================================================
 
             navigate(
                 "/verify-otp",
@@ -138,7 +162,9 @@ function ForgotPassword() {
         }
     };
 
+
     return (
+
         <div className="login-page">
 
             <div className="login-card">
@@ -147,16 +173,27 @@ function ForgotPassword() {
                     🔑
                 </div>
 
+
                 <h1>
                     Forgot password?
                 </h1>
 
+
                 <p className="login-subtitle">
+
                     Enter your registered email address.
                     We'll send you an OTP to verify your account.
+
                 </p>
 
-                <form onSubmit={handleSubmit}>
+
+                <form
+                    onSubmit={handleSubmit}
+                >
+
+                    {/* =================================================
+                        EMAIL
+                    ================================================= */}
 
                     <div className="form-group">
 
@@ -170,22 +207,31 @@ function ForgotPassword() {
                             placeholder="you@example.com"
                             value={email}
                             onChange={(e) =>
-                                setEmail(e.target.value)
+                                setEmail(
+                                    e.target.value
+                                )
                             }
                             required
                         />
 
                     </div>
 
+
+                    {/* =================================================
+                        SEND OTP
+                    ================================================= */}
+
                     <button
                         type="submit"
                         className="login-button"
                         disabled={loading}
                     >
+
                         {loading
                             ? "Sending OTP..."
                             : "Send OTP"
                         }
+
                     </button>
 
                 </form>
