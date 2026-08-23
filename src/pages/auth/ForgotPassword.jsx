@@ -8,7 +8,18 @@ function ForgotPassword() {
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
 
+    const [showSuccessModal, setShowSuccessModal] =
+        useState(false);
+
+    const [accountType, setAccountType] =
+        useState("");
+
     const navigate = useNavigate();
+
+
+    // =====================================================
+    // SUBMIT
+    // =====================================================
 
     const handleSubmit = async (e) => {
 
@@ -16,6 +27,7 @@ function ForgotPassword() {
 
         const cleanEmail =
             email.trim().toLowerCase();
+
 
         if (!cleanEmail) {
 
@@ -26,9 +38,11 @@ function ForgotPassword() {
             return;
         }
 
+
         try {
 
             setLoading(true);
+
 
             const response =
                 await fetch(
@@ -57,6 +71,7 @@ function ForgotPassword() {
                     "content-type"
                 );
 
+
             let data = {};
 
 
@@ -75,10 +90,12 @@ function ForgotPassword() {
                 const text =
                     await response.text();
 
+
                 console.error(
                     "SERVER RETURNED NON-JSON:",
                     text
                 );
+
 
                 throw new Error(
                     "Server error. Please try again."
@@ -87,7 +104,7 @@ function ForgotPassword() {
 
 
             // =================================================
-            // ERROR RESPONSE
+            // ERROR
             // =================================================
 
             if (!response.ok) {
@@ -116,33 +133,24 @@ function ForgotPassword() {
 
 
             // =================================================
-            // SUCCESS MESSAGE
+            // ACCOUNT TYPE
             // =================================================
 
-            const accountType =
+            const type =
                 data.role === "employer"
                     ? "Employer"
                     : "Job Seeker";
 
 
-            alert(
-                `OTP has been sent to your registered ${accountType} email.`
-            );
+            setAccountType(type);
 
 
             // =================================================
-            // GO TO VERIFY OTP
+            // SHOW SUCCESS MODAL
             // =================================================
 
-            navigate(
-                "/verify-otp",
-                {
-                    state: {
-                        email: cleanEmail,
-                        role: data.role,
-                    },
-                }
-            );
+            setShowSuccessModal(true);
+
 
         } catch (error) {
 
@@ -150,6 +158,7 @@ function ForgotPassword() {
                 "SEND OTP ERROR:",
                 error
             );
+
 
             alert(
                 error.message ||
@@ -161,6 +170,31 @@ function ForgotPassword() {
             setLoading(false);
         }
     };
+
+
+    // =====================================================
+    // MODAL OK
+    // =====================================================
+
+    function handleModalOK() {
+
+        setShowSuccessModal(false);
+
+
+        navigate(
+            "/verify-otp",
+            {
+                state: {
+                    email:
+                        email.trim().toLowerCase(),
+                    role:
+                        accountType === "Employer"
+                            ? "employer"
+                            : "jobseeker",
+                },
+            }
+        );
+    }
 
 
     return (
@@ -201,6 +235,7 @@ function ForgotPassword() {
                             Email
                         </label>
 
+
                         <input
                             id="email"
                             type="email"
@@ -237,6 +272,93 @@ function ForgotPassword() {
                 </form>
 
             </div>
+
+
+            {/* =====================================================
+                SUCCESS MODAL
+            ===================================================== */}
+
+            {showSuccessModal && (
+
+                <div
+                    className="otp-modal-overlay"
+                    onMouseDown={(e) => {
+
+                        if (
+                            e.target ===
+                            e.currentTarget
+                        ) {
+                            setShowSuccessModal(false);
+                        }
+
+                    }}
+                >
+
+                    <div className="otp-success-modal">
+
+
+                        {/* =================================================
+                            ICON
+                        ================================================= */}
+
+                        <div className="otp-success-icon">
+                            ✓
+                        </div>
+
+
+                        {/* =================================================
+                            TITLE
+                        ================================================= */}
+
+                        <h2>
+                            OTP Sent Successfully
+                        </h2>
+
+
+                        {/* =================================================
+                            MESSAGE
+                        ================================================= */}
+
+                        <p>
+
+                            An OTP has been sent to your
+                            registered {accountType} email address.
+
+                        </p>
+
+
+                        <p className="otp-modal-email">
+
+                            {email.trim().toLowerCase()}
+
+                        </p>
+
+
+                        <p className="otp-modal-note">
+
+                            Please check your inbox and enter
+                            the 6-digit OTP to continue.
+
+                        </p>
+
+
+                        {/* =================================================
+                            BUTTON
+                        ================================================= */}
+
+                        <button
+                            type="button"
+                            className="otp-modal-button"
+                            onClick={handleModalOK}
+                        >
+                            OK
+                        </button>
+
+                    </div>
+
+                </div>
+
+            )}
 
         </div>
     );

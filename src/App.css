@@ -10000,3 +10000,463 @@ body {
 .password-eye-button:focus {
     outline: none;
 }
+/* =====================================================
+   OTP SUCCESS MODAL
+===================================================== */
+
+.otp-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+}
+
+
+.otp-success-modal {
+    width: 100%;
+    max-width: 440px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 34px 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.20);
+
+    animation:
+        otpModalIn 0.25s ease;
+}
+
+
+.otp-success-icon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 30px;
+
+    background: #e9f8ef;
+    color: #1f9d55;
+}
+
+
+.otp-success-modal h2 {
+    margin: 0 0 12px;
+
+    font-size: 24px;
+}
+
+
+.otp-success-modal p {
+    margin: 8px 0;
+
+    line-height: 1.6;
+
+    color: #555555;
+}
+
+
+.otp-modal-email {
+    font-weight: 600;
+
+    color: #222222 !important;
+
+    word-break: break-word;
+}
+
+
+.otp-modal-note {
+    font-size: 14px;
+
+    color: #777777 !important;
+}
+
+
+.otp-modal-button {
+    width: 100%;
+
+    margin-top: 22px;
+
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #111827;
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+
+.otp-modal-button:hover {
+    opacity: 0.9;
+}
+
+
+@keyframes otpModalIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+/* =====================================================
+   OTP MODAL OVERLAY
+===================================================== */
+
+.otp-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    z-index: 9999;
+
+    padding: 20px;
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+.otp-success-modal {
+    width: 100%;
+    max-width: 440px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 32px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.2);
+
+    animation:
+        otpModalIn 0.25s ease;
+}
+
+
+/* =====================================================
+   SUCCESS ICON
+===================================================== */
+
+.otp-success-icon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9f8ef;
+
+    color: #1f9d55;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   ERROR ICON
+===================================================== */
+
+.otp-error-icon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff0f0;
+
+    color: #dc3545;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.otp-success-modal h2 {
+    margin: 0 0 12px;
+
+    font-size: 24px;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.otp-success-modal p {
+    margin: 8px 0;
+
+    color: #555555;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   EMAIL
+===================================================== */
+
+.otp-modal-email {
+    font-weight: 600;
+
+    color: #222222 !important;
+
+    word-break: break-word;
+}
+
+
+/* =====================================================
+   SUCCESS BUTTON
+===================================================== */
+
+.otp-modal-button {
+    width: 100%;
+
+    margin-top: 22px;
+
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #111827;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   ERROR BUTTON
+===================================================== */
+
+.otp-modal-error-button {
+    width: 100%;
+
+    margin-top: 22px;
+
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #dc3545;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   ANIMATION
+===================================================== */
+
+@keyframes otpModalIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+.otp-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.55);
+
+    z-index: 9999;
+
+    padding: 20px;
+}
+
+.otp-success-modal {
+    width: 100%;
+    max-width: 440px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 32px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.2);
+
+    animation:
+        otpModalIn 0.25s ease;
+}
+
+.otp-success-icon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #e9f8ef;
+
+    color: #1f9d55;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.otp-error-icon {
+    width: 64px;
+    height: 64px;
+
+    margin: 0 auto 18px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff0f0;
+
+    color: #dc3545;
+
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.otp-success-modal h2 {
+    margin: 0 0 12px;
+
+    font-size: 24px;
+}
+
+.otp-success-modal p {
+    margin: 8px 0;
+
+    color: #555555;
+
+    line-height: 1.6;
+}
+
+.otp-modal-button,
+.otp-modal-error-button {
+    width: 100%;
+
+    margin-top: 22px;
+
+    padding: 13px 20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.otp-modal-button {
+    background: #111827;
+}
+
+.otp-modal-error-button {
+    background: #dc3545;
+}
+
+@keyframes otpModalIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
