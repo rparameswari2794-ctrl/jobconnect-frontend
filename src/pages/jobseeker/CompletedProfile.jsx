@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import {
+    PieChart,
+    Pie,
+    Cell,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
+} from "recharts";
+
 const API_BASE =
     `${import.meta.env.VITE_API_BASE_URL}/auth/jobseeker/`;
 
@@ -50,7 +59,6 @@ function CompletedProfile() {
     // =====================================================
 
     function getMediaUrl(url) {
-
         if (!url) return "";
 
         if (
@@ -69,7 +77,6 @@ function CompletedProfile() {
 
     // =====================================================
     // SAFE VALUE
-    // Prevent React object rendering error
     // =====================================================
 
     function safeValue(value, fallback = "-") {
@@ -108,7 +115,7 @@ function CompletedProfile() {
     }
 
     // =====================================================
-    // LOAD ALL
+    // LOAD PROFILE DATA
     // =====================================================
 
     useEffect(() => {
@@ -198,38 +205,12 @@ function CompletedProfile() {
                     .json()
                     .catch(() => []);
 
-            console.log(
-                "PROFILE:",
-                profileData
-            );
-
-            console.log(
-                "EDUCATION:",
-                educationData
-            );
-
-            console.log(
-                "EXPERIENCE:",
-                experienceData
-            );
-
-            console.log(
-                "PROJECTS:",
-                projectData
-            );
+            console.log("PROFILE:", profileData);
+            console.log("EDUCATION:", educationData);
+            console.log("EXPERIENCE:", experienceData);
+            console.log("PROJECTS:", projectData);
 
             setProfile(profileData);
-
-            /*
-             * Profile serializer already contains:
-             *
-             * educations
-             * experiences
-             * projects
-             *
-             * Therefore use the dedicated endpoints when
-             * available, but fall back to profile data.
-             */
 
             const educationList =
                 normalizeList(educationData);
@@ -294,10 +275,7 @@ function CompletedProfile() {
         setFormError("");
         setMessage("");
 
-        // =================================================
         // PERSONAL
-        // =================================================
-
         if (section === "personal") {
             setForm({
                 full_name:
@@ -311,10 +289,7 @@ function CompletedProfile() {
             });
         }
 
-        // =================================================
         // PROFESSIONAL
-        // =================================================
-
         if (section === "professional") {
             setForm({
                 headline:
@@ -328,10 +303,7 @@ function CompletedProfile() {
             });
         }
 
-        // =================================================
         // EDUCATION
-        // =================================================
-
         if (section === "education") {
             setForm({
                 degree:
@@ -360,10 +332,7 @@ function CompletedProfile() {
             });
         }
 
-        // =================================================
         // EXPERIENCE
-        // =================================================
-
         if (section === "experience") {
             setForm({
                 job_title:
@@ -389,10 +358,7 @@ function CompletedProfile() {
             });
         }
 
-        // =================================================
         // PROJECT
-        // =================================================
-
         if (section === "project") {
             setForm({
                 title:
@@ -416,7 +382,7 @@ function CompletedProfile() {
     }
 
     // =====================================================
-    // CLOSE
+    // CLOSE OVERLAY
     // =====================================================
 
     function closeOverlay() {
@@ -511,6 +477,8 @@ function CompletedProfile() {
             }, 700);
 
         } catch (err) {
+            console.error(err);
+
             setFormError(
                 err.message ||
                 "Unable to update profile."
@@ -633,9 +601,7 @@ function CompletedProfile() {
                 end_date:
                     form.is_current
                         ? null
-                        : (
-                            form.end_date || ""
-                        ),
+                        : form.end_date || "",
 
                 is_current:
                     Boolean(form.is_current),
@@ -811,26 +777,17 @@ function CompletedProfile() {
 
             let url = "";
 
-            if (
-                overlaySection ===
-                "education"
-            ) {
+            if (overlaySection === "education") {
                 url =
                     `${EDUCATION_API}${selectedItem.id}/`;
             }
 
-            if (
-                overlaySection ===
-                "experience"
-            ) {
+            if (overlaySection === "experience") {
                 url =
                     `${EXPERIENCE_API}${selectedItem.id}/`;
             }
 
-            if (
-                overlaySection ===
-                "project"
-            ) {
+            if (overlaySection === "project") {
                 url =
                     `${PROJECT_API}${selectedItem.id}/`;
             }
@@ -900,23 +857,17 @@ function CompletedProfile() {
             return;
         }
 
-        if (
-            overlaySection === "education"
-        ) {
+        if (overlaySection === "education") {
             saveEducation();
             return;
         }
 
-        if (
-            overlaySection === "experience"
-        ) {
+        if (overlaySection === "experience") {
             saveExperience();
             return;
         }
 
-        if (
-            overlaySection === "project"
-        ) {
+        if (overlaySection === "project") {
             saveProject();
         }
     }
@@ -929,9 +880,12 @@ function CompletedProfile() {
         return (
             <div className="completed-profile-page">
                 <main className="completed-profile-main">
+
                     <div className="completed-loading">
+                        <div className="profile-loading-spinner" />
                         <p>Loading profile...</p>
                     </div>
+
                 </main>
             </div>
         );
@@ -944,6 +898,7 @@ function CompletedProfile() {
     if (error) {
         return (
             <div className="completed-profile-page">
+
                 <main className="completed-profile-main">
 
                     <div className="documents-error">
@@ -959,10 +914,11 @@ function CompletedProfile() {
                             )
                         }
                     >
-                        Back to dashboard
+                        ← Back to dashboard
                     </button>
 
                 </main>
+
             </div>
         );
     }
@@ -970,11 +926,15 @@ function CompletedProfile() {
     if (!profile) {
         return (
             <div className="completed-profile-page">
+
                 <main className="completed-profile-main">
+
                     <div className="documents-error">
                         Profile not found.
                     </div>
+
                 </main>
+
             </div>
         );
     }
@@ -992,17 +952,20 @@ function CompletedProfile() {
     ) {
         return (
             <div className="profile-details-page">
+
                 <main className="profile-details-main">
 
                     <section className="profile-details-header">
+
                         <h1>
-                            Profile & verification
+                            Profile & Verification
                         </h1>
 
                         <p>
                             Your profile has been submitted
                             for admin verification.
                         </p>
+
                     </section>
 
                     <section className="profile-section submitted-profile-section">
@@ -1014,7 +977,7 @@ function CompletedProfile() {
                             </div>
 
                             <h2>
-                                Profile submitted
+                                Profile Submitted
                             </h2>
 
                             <p>
@@ -1023,11 +986,13 @@ function CompletedProfile() {
                             </p>
 
                             <div className="submitted-status">
+
                                 <span className="submitted-status-dot" />
 
                                 <strong>
                                     Pending admin approval
                                 </strong>
+
                             </div>
 
                             <p>
@@ -1040,6 +1005,7 @@ function CompletedProfile() {
                     </section>
 
                 </main>
+
             </div>
         );
     }
@@ -1048,11 +1014,10 @@ function CompletedProfile() {
     // REJECTED
     // =====================================================
 
-    if (
-        approvalStatus === "rejected"
-    ) {
+    if (approvalStatus === "rejected") {
         return (
             <div className="completed-profile-page">
+
                 <main className="completed-profile-main">
 
                     <section className="profile-submitted-card rejected-card">
@@ -1062,7 +1027,7 @@ function CompletedProfile() {
                         </div>
 
                         <h1>
-                            Profile rejected
+                            Profile Rejected
                         </h1>
 
                         <p>
@@ -1072,6 +1037,7 @@ function CompletedProfile() {
 
                         {profile.rejection_reason && (
                             <div className="rejection-reason">
+
                                 <strong>
                                     Reason:
                                 </strong>
@@ -1081,6 +1047,7 @@ function CompletedProfile() {
                                         profile.rejection_reason
                                     )}
                                 </p>
+
                             </div>
                         )}
 
@@ -1093,12 +1060,13 @@ function CompletedProfile() {
                                 )
                             }
                         >
-                            Edit profile
+                            Edit Profile
                         </button>
 
                     </section>
 
                 </main>
+
             </div>
         );
     }
@@ -1111,6 +1079,32 @@ function CompletedProfile() {
         profile.profile_completed === true &&
         approvalStatus === "approved"
     ) {
+
+        // =================================================
+        // PIE CHART DATA
+        // =================================================
+
+        const profileChartData = [
+            {
+                name: "Education",
+                value: education.length,
+            },
+            {
+                name: "Experience",
+                value: experiences.length,
+            },
+            {
+                name: "Projects",
+                value: projects.length,
+            },
+        ];
+
+        const chartColors = [
+            "#4f46e5",
+            "#10b981",
+            "#f59e0b",
+        ];
+
         return (
             <div className="profile-details-page">
 
@@ -1125,9 +1119,19 @@ function CompletedProfile() {
                         <div className="approved-header-content">
 
                             <div className="approved-header-title">
+
+                                <span className="profile-header-label">
+                                    
+                                </span>
+
                                 <h1>
                                     My Profile
                                 </h1>
+
+                                <p>
+                                    Manage and view your professional profile
+                                </p>
+
                             </div>
 
                             <div className="approved-profile-right">
@@ -1163,7 +1167,7 @@ function CompletedProfile() {
                     </section>
 
                     {/* =================================================
-                        BASIC
+                        BASIC PROFILE
                     ================================================= */}
 
                     <section className="profile-section verified-profile-basic-section">
@@ -1188,6 +1192,182 @@ function CompletedProfile() {
                     </section>
 
                     {/* =================================================
+    PROFILE PIE CHART
+================================================= */}
+                    <section className="profile-section profile-chart-section">
+
+                        <div className="profile-section-title">
+
+                            <div>
+                                <span className="section-label">
+                                    
+                                </span>
+
+                                <h2>
+                                    Profile Summary
+                                </h2>
+                            </div>
+
+                        </div>
+
+                        <div className="pie-chart-area">
+
+                            {/* PIE CHART */}
+                            <div className="pie-chart">
+
+                                <ResponsiveContainer
+                                    width="100%"
+                                    height="100%"
+                                >
+                                    <PieChart>
+
+                                        <Pie
+                                            data={profileChartData}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={60}
+                                            outerRadius={95}
+                                            paddingAngle={3}
+                                            dataKey="value"
+                                            nameKey="name"
+                                            stroke="none"
+                                        >
+
+                                            {profileChartData.map(
+                                                (entry, index) => (
+                                                    <Cell
+                                                        key={`profile-pie-${index}`}
+                                                        fill={
+                                                            chartColors[
+                                                            index %
+                                                            chartColors.length
+                                                            ]
+                                                        }
+                                                    />
+                                                )
+                                            )}
+
+                                        </Pie>
+
+                                        <Tooltip
+                                            formatter={(value, name) => [
+                                                value,
+                                                name,
+                                            ]}
+                                            contentStyle={{
+                                                borderRadius: "12px",
+                                                border: "1px solid #e5e7eb",
+                                                boxShadow:
+                                                    "0 10px 30px rgba(15, 23, 42, 0.10)",
+                                                fontSize: "12px",
+                                            }}
+                                        />
+
+                                    </PieChart>
+                                </ResponsiveContainer>
+
+                                {/* CENTER VALUE */}
+                                <div className="pie-chart-inner">
+
+                                    <strong>
+                                        {education.length +
+                                            experiences.length +
+                                            projects.length}
+                                    </strong>
+
+                                    <span>
+                                        TOTAL
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+
+                            {/* LEGEND */}
+                            <div className="pie-legend">
+
+                                {/* EDUCATION */}
+                                <div className="legend-item">
+
+                                    <span
+                                        className="legend-color"
+                                        style={{
+                                            background: "#4f46e5",
+                                        }}
+                                    />
+
+                                    <div>
+
+                                        <strong>
+                                            {education.length}
+                                        </strong>
+
+                                        <span>
+                                            Education
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* EXPERIENCE */}
+                                <div className="legend-item">
+
+                                    <span
+                                        className="legend-color"
+                                        style={{
+                                            background: "#10b981",
+                                        }}
+                                    />
+
+                                    <div>
+
+                                        <strong>
+                                            {experiences.length}
+                                        </strong>
+
+                                        <span>
+                                            Experience
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                {/* PROJECTS */}
+                                <div className="legend-item">
+
+                                    <span
+                                        className="legend-color"
+                                        style={{
+                                            background: "#f59e0b",
+                                        }}
+                                    />
+
+                                    <div>
+
+                                        <strong>
+                                            {projects.length}
+                                        </strong>
+
+                                        <span>
+                                            Projects
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+
+                    {/* =================================================
                         PERSONAL
                     ================================================= */}
 
@@ -1195,9 +1375,16 @@ function CompletedProfile() {
 
                         <div className="profile-section-title">
 
-                            <h2>
-                                Personal Details
-                            </h2>
+                            <div>
+
+                                <span className="section-label">
+                                </span>
+
+                                <h2>
+                                    Personal Details
+                                </h2>
+
+                            </div>
 
                             <button
                                 type="button"
@@ -1217,6 +1404,7 @@ function CompletedProfile() {
                         <div className="profile-details-grid">
 
                             <div className="profile-detail-item">
+
                                 <label>
                                     Full Name
                                 </label>
@@ -1226,9 +1414,11 @@ function CompletedProfile() {
                                         profile.full_name
                                     )}
                                 </p>
+
                             </div>
 
                             <div className="profile-detail-item">
+
                                 <label>
                                     Email
                                 </label>
@@ -1238,9 +1428,11 @@ function CompletedProfile() {
                                         profile.email
                                     )}
                                 </p>
+
                             </div>
 
                             <div className="profile-detail-item">
+
                                 <label>
                                     Phone
                                 </label>
@@ -1250,9 +1442,11 @@ function CompletedProfile() {
                                         profile.phone
                                     )}
                                 </p>
+
                             </div>
 
                             <div className="profile-detail-item">
+
                                 <label>
                                     Location
                                 </label>
@@ -1262,6 +1456,7 @@ function CompletedProfile() {
                                         profile.location
                                     )}
                                 </p>
+
                             </div>
 
                         </div>
@@ -1276,9 +1471,16 @@ function CompletedProfile() {
 
                         <div className="profile-section-title">
 
-                            <h2>
-                                Professional Details
-                            </h2>
+                            <div>
+
+                                <span className="section-label">
+                                </span>
+
+                                <h2>
+                                    Professional Details
+                                </h2>
+
+                            </div>
 
                             <button
                                 type="button"
@@ -1298,6 +1500,7 @@ function CompletedProfile() {
                         <div className="profile-details-grid">
 
                             <div className="profile-detail-item">
+
                                 <label>
                                     Headline
                                 </label>
@@ -1307,9 +1510,11 @@ function CompletedProfile() {
                                         profile.headline
                                     )}
                                 </p>
+
                             </div>
 
                             <div className="profile-detail-item">
+
                                 <label>
                                     Skills
                                 </label>
@@ -1319,6 +1524,7 @@ function CompletedProfile() {
                                         profile.skills
                                     )}
                                 </p>
+
                             </div>
 
                             <div className="profile-detail-item">
@@ -1335,10 +1541,12 @@ function CompletedProfile() {
                                         target="_blank"
                                         rel="noreferrer"
                                     >
-                                        View LinkedIn
+                                        View LinkedIn →
                                     </a>
                                 ) : (
-                                    <p>-</p>
+                                    <p>
+                                        -
+                                    </p>
                                 )}
 
                             </div>
@@ -1355,9 +1563,16 @@ function CompletedProfile() {
 
                         <div className="profile-section-title">
 
-                            <h2>
-                                Education
-                            </h2>
+                            <div>
+
+                                <span className="section-label">
+                                </span>
+
+                                <h2>
+                                    Education
+                                </h2>
+
+                            </div>
 
                             <button
                                 type="button"
@@ -1387,73 +1602,81 @@ function CompletedProfile() {
 
                                         <div className="profile-item-content">
 
-                                            <h3>
-                                                {safeValue(
-                                                    item.degree
+                                            <div className="profile-item-icon">
+                                                🎓
+                                            </div>
+
+                                            <div className="profile-item-details">
+
+                                                <h3>
+                                                    {safeValue(
+                                                        item.degree
+                                                    )}
+                                                </h3>
+
+                                                {item.college && (
+                                                    <p>
+                                                        College:{" "}
+                                                        {safeValue(
+                                                            item.college
+                                                        )}
+                                                    </p>
                                                 )}
-                                            </h3>
 
-                                            {item.college && (
-                                                <p>
-                                                    College:{" "}
-                                                    {safeValue(
-                                                        item.college
-                                                    )}
-                                                </p>
-                                            )}
+                                                {item.university && (
+                                                    <p>
+                                                        University:{" "}
+                                                        {safeValue(
+                                                            item.university
+                                                        )}
+                                                    </p>
+                                                )}
 
-                                            {item.university && (
-                                                <p>
-                                                    University:{" "}
-                                                    {safeValue(
-                                                        item.university
+                                                {(
+                                                    item.start_year ||
+                                                    item.end_year
+                                                ) && (
+                                                        <small>
+                                                            {safeValue(
+                                                                item.start_year
+                                                            )}
+                                                            {" - "}
+                                                            {item.end_year
+                                                                ? safeValue(
+                                                                    item.end_year
+                                                                )
+                                                                : "Present"}
+                                                        </small>
                                                     )}
-                                                </p>
-                                            )}
 
-                                            {(
-                                                item.start_year ||
-                                                item.end_year
-                                            ) && (
-                                                <small>
-                                                    {safeValue(
-                                                        item.start_year
-                                                    )}
-                                                    {" - "}
-                                                    {item.end_year
-                                                        ? safeValue(
-                                                            item.end_year
-                                                        )
-                                                        : "Present"}
-                                                </small>
-                                            )}
+                                                {item.passing_month_year && (
+                                                    <p>
+                                                        Passing:{" "}
+                                                        {safeValue(
+                                                            item.passing_month_year
+                                                        )}
+                                                    </p>
+                                                )}
 
-                                            {item.passing_month_year && (
-                                                <p>
-                                                    Passing:{" "}
-                                                    {safeValue(
-                                                        item.passing_month_year
-                                                    )}
-                                                </p>
-                                            )}
+                                                {item.percentage_cgpa && (
+                                                    <p>
+                                                        Percentage / CGPA:{" "}
+                                                        {safeValue(
+                                                            item.percentage_cgpa
+                                                        )}
+                                                    </p>
+                                                )}
 
-                                            {item.percentage_cgpa && (
-                                                <p>
-                                                    Percentage / CGPA:{" "}
-                                                    {safeValue(
-                                                        item.percentage_cgpa
-                                                    )}
-                                                </p>
-                                            )}
+                                                {item.activities && (
+                                                    <p>
+                                                        Activities:{" "}
+                                                        {safeValue(
+                                                            item.activities
+                                                        )}
+                                                    </p>
+                                                )}
 
-                                            {item.activities && (
-                                                <p>
-                                                    Activities:{" "}
-                                                    {safeValue(
-                                                        item.activities
-                                                    )}
-                                                </p>
-                                            )}
+                                            </div>
 
                                         </div>
 
@@ -1511,9 +1734,16 @@ function CompletedProfile() {
 
                         <div className="profile-section-title">
 
-                            <h2>
-                                Experience
-                            </h2>
+                            <div>
+
+                                <span className="section-label">
+                                </span>
+
+                                <h2>
+                                    Experience
+                                </h2>
+
+                            </div>
 
                             <button
                                 type="button"
@@ -1543,51 +1773,59 @@ function CompletedProfile() {
 
                                         <div className="profile-item-content">
 
-                                            <h3>
-                                                {safeValue(
-                                                    item.job_title
-                                                )}
-                                            </h3>
+                                            <div className="profile-item-icon">
+                                                💼
+                                            </div>
 
-                                            <p>
-                                                {safeValue(
-                                                    item.company
-                                                )}
-                                            </p>
+                                            <div className="profile-item-details">
 
-                                            {item.employment_type && (
-                                                <p>
-                                                    Employment Type:{" "}
+                                                <h3>
                                                     {safeValue(
-                                                        item.employment_type
+                                                        item.job_title
+                                                    )}
+                                                </h3>
+
+                                                <p>
+                                                    {safeValue(
+                                                        item.company
                                                     )}
                                                 </p>
-                                            )}
 
-                                            {(item.start_date ||
-                                                item.end_date ||
-                                                item.is_current) && (
-                                                <small>
-                                                    {safeValue(
-                                                        item.start_date
-                                                    )}
-                                                    {" - "}
-
-                                                    {item.is_current
-                                                        ? "Present"
-                                                        : safeValue(
-                                                            item.end_date
+                                                {item.employment_type && (
+                                                    <p>
+                                                        Employment Type:{" "}
+                                                        {safeValue(
+                                                            item.employment_type
                                                         )}
-                                                </small>
-                                            )}
+                                                    </p>
+                                                )}
 
-                                            {item.description && (
-                                                <p>
-                                                    {safeValue(
-                                                        item.description
+                                                {(item.start_date ||
+                                                    item.end_date ||
+                                                    item.is_current) && (
+                                                        <small>
+                                                            {safeValue(
+                                                                item.start_date
+                                                            )}
+                                                            {" - "}
+
+                                                            {item.is_current
+                                                                ? "Present"
+                                                                : safeValue(
+                                                                    item.end_date
+                                                                )}
+                                                        </small>
                                                     )}
-                                                </p>
-                                            )}
+
+                                                {item.description && (
+                                                    <p>
+                                                        {safeValue(
+                                                            item.description
+                                                        )}
+                                                    </p>
+                                                )}
+
+                                            </div>
 
                                         </div>
 
@@ -1645,9 +1883,16 @@ function CompletedProfile() {
 
                         <div className="profile-section-title">
 
-                            <h2>
-                                Projects
-                            </h2>
+                            <div>
+
+                                <span className="section-label">
+                                </span>
+
+                                <h2>
+                                    Projects
+                                </h2>
+
+                            </div>
 
                             <button
                                 type="button"
@@ -1681,57 +1926,65 @@ function CompletedProfile() {
 
                                             <div className="profile-item-content">
 
-                                                <h3>
-                                                    {safeValue(
-                                                        item.title
+                                                <div className="profile-item-icon">
+                                                    🚀
+                                                </div>
+
+                                                <div className="profile-item-details">
+
+                                                    <h3>
+                                                        {safeValue(
+                                                            item.title
+                                                        )}
+                                                    </h3>
+
+                                                    {item.project_type && (
+                                                        <p>
+                                                            Type:{" "}
+                                                            {safeValue(
+                                                                item.project_type
+                                                            )}
+                                                        </p>
                                                     )}
-                                                </h3>
 
-                                                {item.project_type && (
-                                                    <p>
-                                                        Type:{" "}
-                                                        {safeValue(
-                                                            item.project_type
-                                                        )}
-                                                    </p>
-                                                )}
+                                                    {item.description && (
+                                                        <p>
+                                                            {safeValue(
+                                                                item.description
+                                                            )}
+                                                        </p>
+                                                    )}
 
-                                                {item.description && (
-                                                    <p>
-                                                        {safeValue(
-                                                            item.description
-                                                        )}
-                                                    </p>
-                                                )}
+                                                    {item.technologies && (
+                                                        <small>
+                                                            Technologies:{" "}
+                                                            {safeValue(
+                                                                item.technologies
+                                                            )}
+                                                        </small>
+                                                    )}
 
-                                                {item.technologies && (
-                                                    <small>
-                                                        Technologies:{" "}
-                                                        {safeValue(
-                                                            item.technologies
-                                                        )}
-                                                    </small>
-                                                )}
+                                                    {projectLink && (
+                                                        <div className="project-link">
 
-                                                {projectLink && (
-                                                    <div className="project-link">
+                                                            <a
+                                                                href={
+                                                                    projectLink.startsWith(
+                                                                        "http"
+                                                                    )
+                                                                        ? projectLink
+                                                                        : `https://${projectLink}`
+                                                                }
+                                                                target="_blank"
+                                                                rel="noreferrer"
+                                                            >
+                                                                View Project →
+                                                            </a>
 
-                                                        <a
-                                                            href={
-                                                                projectLink.startsWith(
-                                                                    "http"
-                                                                )
-                                                                    ? projectLink
-                                                                    : `https://${projectLink}`
-                                                            }
-                                                            target="_blank"
-                                                            rel="noreferrer"
-                                                        >
-                                                            View Project
-                                                        </a>
+                                                        </div>
+                                                    )}
 
-                                                    </div>
-                                                )}
+                                                </div>
 
                                             </div>
 
@@ -1788,9 +2041,19 @@ function CompletedProfile() {
                     <section className="profile-section">
 
                         <div className="profile-section-title">
-                            <h2>
-                                Uploaded Documents
-                            </h2>
+
+                            <div>
+
+                                <span className="section-label">
+                                    DOCUMENTS
+                                </span>
+
+                                <h2>
+                                    Uploaded Documents
+                                </h2>
+
+                            </div>
+
                         </div>
 
                         <div className="profile-documents-list">
@@ -1805,6 +2068,7 @@ function CompletedProfile() {
                                         </span>
 
                                         <div>
+
                                             <strong>
                                                 Resume
                                             </strong>
@@ -1812,6 +2076,7 @@ function CompletedProfile() {
                                             <p>
                                                 Resume uploaded
                                             </p>
+
                                         </div>
 
                                     </div>
@@ -1824,7 +2089,7 @@ function CompletedProfile() {
                                         rel="noreferrer"
                                         className="document-view-button"
                                     >
-                                        View
+                                        View →
                                     </a>
 
                                 </div>
@@ -1840,6 +2105,7 @@ function CompletedProfile() {
                                         </span>
 
                                         <div>
+
                                             <strong>
                                                 Aadhaar
                                             </strong>
@@ -1847,6 +2113,7 @@ function CompletedProfile() {
                                             <p>
                                                 Document uploaded
                                             </p>
+
                                         </div>
 
                                     </div>
@@ -1859,7 +2126,7 @@ function CompletedProfile() {
                                         rel="noreferrer"
                                         className="document-view-button"
                                     >
-                                        View
+                                        View →
                                     </a>
 
                                 </div>
@@ -1879,7 +2146,7 @@ function CompletedProfile() {
                 </main>
 
                 {/* =====================================================
-                    OVERLAY
+                    EDIT / ADD / DELETE OVERLAY
                 ===================================================== */}
 
                 {showOverlay && (
@@ -1890,34 +2157,44 @@ function CompletedProfile() {
 
                         <div
                             className="profile-edit-panel"
-                            onMouseDown={e =>
-                                e.stopPropagation()
+                            onMouseDown={event =>
+                                event.stopPropagation()
                             }
                         >
 
+                            {/* MODAL HEADER */}
+
                             <div className="profile-edit-panel-header">
 
-                                <h2>
+                                <div>
 
-                                    {overlayAction === "delete"
-                                        ? "Delete"
-                                        : overlayAction === "add"
-                                            ? "Add"
-                                            : "Edit"
-                                    }{" "}
+                                    <span className="modal-section-label">
+                                        PROFILE UPDATE
+                                    </span>
 
-                                    {overlaySection === "personal"
-                                        ? "Personal Details"
-                                        : overlaySection === "professional"
-                                            ? "Professional Details"
-                                            : overlaySection === "education"
-                                                ? "Education"
-                                                : overlaySection === "experience"
-                                                    ? "Experience"
-                                                    : "Project"
-                                    }
+                                    <h2>
 
-                                </h2>
+                                        {overlayAction === "delete"
+                                            ? "Delete"
+                                            : overlayAction === "add"
+                                                ? "Add"
+                                                : "Edit"
+                                        }{" "}
+
+                                        {overlaySection === "personal"
+                                            ? "Personal Details"
+                                            : overlaySection === "professional"
+                                                ? "Professional Details"
+                                                : overlaySection === "education"
+                                                    ? "Education"
+                                                    : overlaySection === "experience"
+                                                        ? "Experience"
+                                                        : "Project"
+                                        }
+
+                                    </h2>
+
+                                </div>
 
                                 <button
                                     type="button"
@@ -1929,9 +2206,7 @@ function CompletedProfile() {
 
                             </div>
 
-                            {/* =================================================
-                                DELETE
-                            ================================================= */}
+                            {/* DELETE */}
 
                             {overlayAction === "delete" ? (
 
@@ -1989,12 +2264,11 @@ function CompletedProfile() {
                                     className="profile-edit-form"
                                 >
 
-                                    {/* =================================================
-                                        PERSONAL
-                                    ================================================= */}
+                                    {/* PERSONAL */}
 
                                     {overlaySection === "personal" && (
                                         <>
+
                                             <div className="form-group">
 
                                                 <label>
@@ -2051,15 +2325,15 @@ function CompletedProfile() {
                                                 />
 
                                             </div>
+
                                         </>
                                     )}
 
-                                    {/* =================================================
-                                        PROFESSIONAL
-                                    ================================================= */}
+                                    {/* PROFESSIONAL */}
 
                                     {overlaySection === "professional" && (
                                         <>
+
                                             <div className="form-group">
 
                                                 <label>
@@ -2117,15 +2391,15 @@ function CompletedProfile() {
                                                 />
 
                                             </div>
+
                                         </>
                                     )}
 
-                                    {/* =================================================
-                                        EDUCATION
-                                    ================================================= */}
+                                    {/* EDUCATION */}
 
                                     {overlaySection === "education" && (
                                         <>
+
                                             <div className="form-group">
 
                                                 <label>
@@ -2284,15 +2558,15 @@ function CompletedProfile() {
                                                 />
 
                                             </div>
+
                                         </>
                                     )}
 
-                                    {/* =================================================
-                                        EXPERIENCE
-                                    ================================================= */}
+                                    {/* EXPERIENCE */}
 
                                     {overlaySection === "experience" && (
                                         <>
+
                                             <div className="form-group">
 
                                                 <label>
@@ -2445,15 +2719,15 @@ function CompletedProfile() {
                                                 />
 
                                             </div>
+
                                         </>
                                     )}
 
-                                    {/* =================================================
-                                        PROJECT
-                                    ================================================= */}
+                                    {/* PROJECT */}
 
                                     {overlaySection === "project" && (
                                         <>
+
                                             <div className="form-group">
 
                                                 <label>
@@ -2552,12 +2826,11 @@ function CompletedProfile() {
                                                 />
 
                                             </div>
+
                                         </>
                                     )}
 
-                                    {/* =================================================
-                                        ERROR / SUCCESS
-                                    ================================================= */}
+                                    {/* ERROR */}
 
                                     {formError && (
                                         <div className="overlay-error">
@@ -2565,15 +2838,15 @@ function CompletedProfile() {
                                         </div>
                                     )}
 
+                                    {/* SUCCESS */}
+
                                     {message && (
                                         <div className="overlay-success">
                                             {message}
                                         </div>
                                     )}
 
-                                    {/* =================================================
-                                        ACTIONS
-                                    ================================================= */}
+                                    {/* ACTIONS */}
 
                                     <div className="overlay-actions">
 
@@ -2601,6 +2874,7 @@ function CompletedProfile() {
                                     </div>
 
                                 </form>
+
                             )}
 
                         </div>

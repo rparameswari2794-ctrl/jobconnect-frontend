@@ -190,6 +190,7 @@ function AppRoutes() {
                 element={<EmployerProfile />}
             />
 
+            
             <Route
                 path="/employer/verification"
                 element={<CompanyVerification />}

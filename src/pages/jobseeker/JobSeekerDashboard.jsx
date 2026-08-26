@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+import {
+    PieChart,
+    Pie,
+    Cell,
+    ResponsiveContainer,
+    Tooltip,
+    Legend,
+} from "recharts";
 
 const API_BASE =
     `${import.meta.env.VITE_API_BASE_URL}/auth/jobseeker/`;
@@ -127,6 +135,52 @@ function JobseekerDashboard() {
                 String(app.status).toUpperCase() === "SHORTLISTED"
         ).length;
 
+    const rejected =
+        applications.filter(
+            (app) =>
+                String(app.status).toUpperCase() === "REJECTED"
+        ).length;
+
+    const hired =
+        applications.filter(
+            (app) =>
+                String(app.status).toUpperCase() === "HIRED"
+        ).length;
+
+    // =====================================================
+    // PIE CHART DATA
+    // =====================================================
+
+    const chartData = [
+        {
+            name: "Applied",
+            value: awaitingResponse,
+        },
+        {
+            name: "Shortlisted",
+            value: shortlisted,
+        },
+        {
+            name: "Rejected",
+            value: rejected,
+        },
+        {
+            name: "Hired",
+            value: hired,
+        },
+    ].filter((item) => item.value > 0);
+
+    // =====================================================
+    // CHART COLORS
+    // =====================================================
+
+    const chartColors = [
+        "#2563eb",
+        "#7c3aed",
+        "#ef4444",
+        "#16a34a",
+    ];
+
     // =====================================================
     // STATUS LABEL
     // =====================================================
@@ -220,13 +274,24 @@ function JobseekerDashboard() {
 
                 <section className="js-welcome">
 
-                    <h1>
-                        Welcome back
-                    </h1>
+                    <div>
+                        <span className="js-welcome-label">
+                            JOB SEEKER DASHBOARD
+                        </span>
 
-                    <p>
-                        Here's where your search stands today
-                    </p>
+                        <h1>
+                            Welcome back 👋
+                        </h1>
+
+                        <p>
+                            Here's where your job search
+                            stands today.
+                        </p>
+                    </div>
+
+                    <div className="js-welcome-icon">
+                        💼
+                    </div>
 
                 </section>
 
@@ -237,41 +302,343 @@ function JobseekerDashboard() {
 
                 <section className="js-stat-grid">
 
-                    <div className="js-stat-card">
+                    {/* APPLICATIONS */}
 
-                        <h2>
-                            {applicationsSent}
-                        </h2>
+                    <div className="js-stat-card applications-stat">
 
-                        <p>
-                            APPLICATIONS SENT
-                        </p>
+                        <div className="js-stat-icon">
+                            📄
+                        </div>
+
+                        <div className="js-stat-content">
+
+                            <span>
+                                APPLICATIONS SENT
+                            </span>
+
+                            <h2>
+                                {applicationsSent}
+                            </h2>
+
+                            <small>
+                                Total applications
+                            </small>
+
+                        </div>
 
                     </div>
 
 
-                    <div className="js-stat-card">
+                    {/* AWAITING */}
 
-                        <h2>
-                            {awaitingResponse}
-                        </h2>
+                    <div className="js-stat-card awaiting-stat">
 
-                        <p>
-                            AWAITING RESPONSE
-                        </p>
+                        <div className="js-stat-icon">
+                            ⏳
+                        </div>
+
+                        <div className="js-stat-content">
+
+                            <span>
+                                AWAITING RESPONSE
+                            </span>
+
+                            <h2>
+                                {awaitingResponse}
+                            </h2>
+
+                            <small>
+                                Applications pending
+                            </small>
+
+                        </div>
 
                     </div>
 
 
-                    <div className="js-stat-card">
+                    {/* SHORTLISTED */}
 
-                        <h2>
-                            {shortlisted}
-                        </h2>
+                    <div className="js-stat-card shortlisted-stat">
 
-                        <p>
-                            SHORTLISTED
-                        </p>
+                        <div className="js-stat-icon">
+                            ⭐
+                        </div>
+
+                        <div className="js-stat-content">
+
+                            <span>
+                                SHORTLISTED
+                            </span>
+
+                            <h2>
+                                {shortlisted}
+                            </h2>
+
+                            <small>
+                                Shortlisted applications
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                {/* =================================================
+                    ANALYTICS
+                ================================================= */}
+
+                <section className="js-analytics-grid">
+
+                    {/* =================================================
+                        PIE CHART
+                    ================================================= */}
+
+                    <div className="js-chart-card">
+
+                        <div className="js-card-heading">
+
+                            <div>
+                                <h2>
+                                    Application Overview
+                                </h2>
+
+                                <p>
+                                    Your application status
+                                </p>
+                            </div>
+
+                            <span className="js-chart-badge">
+                                Overview
+                            </span>
+
+                        </div>
+
+
+                        <div className="js-chart-wrapper">
+
+                            {applications.length === 0 ? (
+
+                                <div className="js-chart-empty">
+                                    <div>
+                                        📊
+                                    </div>
+
+                                    <p>
+                                        No application data
+                                        available yet.
+                                    </p>
+                                </div>
+
+                            ) : (
+
+                                <ResponsiveContainer
+                                    width="100%"
+                                    height={300}
+                                >
+
+                                    <PieChart>
+
+                                        <Pie
+                                            data={chartData}
+                                            cx="50%"
+                                            cy="48%"
+                                            innerRadius={75}
+                                            outerRadius={110}
+                                            paddingAngle={4}
+                                            dataKey="value"
+                                            nameKey="name"
+                                        >
+
+                                            {chartData.map(
+                                                (entry, index) => (
+
+                                                    <Cell
+                                                        key={
+                                                            `cell-${index}`
+                                                        }
+                                                        fill={
+                                                            chartColors[
+                                                                index %
+                                                                chartColors.length
+                                                            ]
+                                                        }
+                                                    />
+
+                                                )
+                                            )}
+
+                                        </Pie>
+
+                                        <Tooltip
+                                            formatter={(
+                                                value,
+                                                name
+                                            ) => [
+                                                value,
+                                                name,
+                                            ]}
+                                            contentStyle={{
+                                                borderRadius:
+                                                    "10px",
+                                                border:
+                                                    "1px solid #e5e7eb",
+                                                boxShadow:
+                                                    "0 8px 20px rgba(15,23,42,0.10)",
+                                            }}
+                                        />
+
+                                        <Legend
+                                            verticalAlign="bottom"
+                                            height={36}
+                                        />
+
+                                    </PieChart>
+
+                                </ResponsiveContainer>
+
+                            )}
+
+                        </div>
+
+                    </div>
+
+
+                    {/* =================================================
+                        QUICK STATISTICS
+                    ================================================= */}
+
+                    <div className="js-summary-card">
+
+                        <div className="js-card-heading">
+
+                            <div>
+                                <h2>
+                                    Application Statistics
+                                </h2>
+
+                                <p>
+                                    Current application progress
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div className="js-summary-list">
+
+                            <div className="js-summary-row">
+
+                                <div className="js-summary-left">
+
+                                    <span className="js-summary-dot applied-dot"></span>
+
+                                    <span>
+                                        Applied
+                                    </span>
+
+                                </div>
+
+                                <strong>
+                                    {awaitingResponse}
+                                </strong>
+
+                            </div>
+
+
+                            <div className="js-summary-row">
+
+                                <div className="js-summary-left">
+
+                                    <span className="js-summary-dot shortlisted-dot"></span>
+
+                                    <span>
+                                        Shortlisted
+                                    </span>
+
+                                </div>
+
+                                <strong>
+                                    {shortlisted}
+                                </strong>
+
+                            </div>
+
+
+                            <div className="js-summary-row">
+
+                                <div className="js-summary-left">
+
+                                    <span className="js-summary-dot rejected-dot"></span>
+
+                                    <span>
+                                        Rejected
+                                    </span>
+
+                                </div>
+
+                                <strong>
+                                    {rejected}
+                                </strong>
+
+                            </div>
+
+
+                            <div className="js-summary-row">
+
+                                <div className="js-summary-left">
+
+                                    <span className="js-summary-dot hired-dot"></span>
+
+                                    <span>
+                                        Hired
+                                    </span>
+
+                                </div>
+
+                                <strong>
+                                    {hired}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div className="js-success-rate">
+
+                            <div>
+
+                                <span>
+                                    Total Applications
+                                </span>
+
+                                <strong>
+                                    {applicationsSent}
+                                </strong>
+
+                            </div>
+
+                            <div>
+
+                                <span>
+                                    Shortlisted Rate
+                                </span>
+
+                                <strong>
+                                    {applicationsSent > 0
+                                        ? `${Math.round(
+                                            (shortlisted /
+                                                applicationsSent) *
+                                            100
+                                        )}%`
+                                        : "0%"}
+                                </strong>
+
+                            </div>
+
+                        </div>
 
                     </div>
 
@@ -283,6 +650,25 @@ function JobseekerDashboard() {
                 ================================================= */}
 
                 <section className="js-applications-card">
+
+                    <div className="js-applications-heading">
+
+                        <div>
+                            <h2>
+                                My Applications
+                            </h2>
+
+                            <p>
+                                Track your recent job applications
+                            </p>
+                        </div>
+
+                        <span className="js-total-badge">
+                            {applicationsSent} Total
+                        </span>
+
+                    </div>
+
 
                     <div className="js-table">
 
@@ -315,7 +701,11 @@ function JobseekerDashboard() {
 
                             <div className="js-empty-state">
 
-                                Loading applications...
+                                <div className="js-loading-spinner"></div>
+
+                                <span>
+                                    Loading applications...
+                                </span>
 
                             </div>
 
@@ -326,7 +716,11 @@ function JobseekerDashboard() {
 
                         {!loading && error && (
 
-                            <div className="js-empty-state">
+                            <div className="js-empty-state js-error-state">
+
+                                <span>
+                                    ⚠️
+                                </span>
 
                                 {error}
 
@@ -343,7 +737,18 @@ function JobseekerDashboard() {
 
                                 <div className="js-empty-state">
 
-                                    No applications yet.
+                                    <div className="js-empty-icon">
+                                        📄
+                                    </div>
+
+                                    <strong>
+                                        No applications yet
+                                    </strong>
+
+                                    <span>
+                                        Your submitted applications
+                                        will appear here.
+                                    </span>
 
                                 </div>
 
@@ -363,25 +768,53 @@ function JobseekerDashboard() {
                                     className="js-table-row"
                                 >
 
-                                    <div>
-                                        {getJobTitle(app)}
+                                    <div
+                                        className="js-role-cell"
+                                        data-label="ROLE"
+                                    >
+                                        <strong>
+                                            {getJobTitle(app)}
+                                        </strong>
                                     </div>
 
-                                    <div>
+                                    <div
+                                        className="js-company-cell"
+                                        data-label="COMPANY"
+                                    >
                                         {getCompanyName(app)}
                                     </div>
 
-                                    <div>
+                                    <div
+                                        data-label="APPLIED"
+                                    >
                                         {formatDate(
                                             app.applied_at ||
                                             app.created_at
                                         )}
                                     </div>
 
-                                    <div>
-                                        {formatStatus(
-                                            app.status
-                                        )}
+                                    <div
+                                        data-label="STATUS"
+                                    >
+                                        <span
+                                            className={
+                                                `js-status-badge js-status-${String(
+                                                    app.status || ""
+                                                )
+                                                    .toLowerCase()
+                                                    .replace(
+                                                        /\s+/g,
+                                                        "-"
+                                                    )}`
+                                            }
+                                        >
+                                            <span className="js-status-dot"></span>
+
+                                            {formatStatus(
+                                                app.status
+                                            )}
+
+                                        </span>
                                     </div>
 
                                 </div>

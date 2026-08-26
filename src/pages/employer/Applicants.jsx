@@ -703,6 +703,222 @@ function Applicants() {
                     </p>
 
                 </section>
+                {/* =====================================================
+    APPLICATION ANALYTICS
+===================================================== */}
+
+                {!error && (
+                    <section className="applicant-analytics">
+
+                        <div className="analytics-header">
+                            <div>
+                                <span className="analytics-eyebrow">
+                                    APPLICATION OVERVIEW
+                                </span>
+
+                                <h2>
+                                    Applicant Analytics
+                                </h2>
+
+                                <p>
+                                    Track candidate progress and application status.
+                                </p>
+                            </div>
+
+                            <div className="total-applicants">
+                                <strong>{applicants.length}</strong>
+                                <span>Total Applicants</span>
+                            </div>
+                        </div>
+
+
+                        <div className="analytics-content">
+
+                            {/* STATUS CARDS */}
+
+                            <div className="status-summary-grid">
+
+                                <div className="status-summary-card applied-card">
+                                    <div className="summary-icon">
+                                        👤
+                                    </div>
+
+                                    <div>
+                                        <span>Applied</span>
+                                        <strong>{appliedCount}</strong>
+                                    </div>
+                                </div>
+
+
+                                <div className="status-summary-card review-card">
+                                    <div className="summary-icon">
+                                        🔍
+                                    </div>
+
+                                    <div>
+                                        <span>Under Review</span>
+                                        <strong>{underReviewCount}</strong>
+                                    </div>
+                                </div>
+
+
+                                <div className="status-summary-card shortlist-card">
+                                    <div className="summary-icon">
+                                        ⭐
+                                    </div>
+
+                                    <div>
+                                        <span>Shortlisted</span>
+                                        <strong>{shortlistedCount}</strong>
+                                    </div>
+                                </div>
+
+
+                                <div className="status-summary-card interview-card">
+                                    <div className="summary-icon">
+                                        📅
+                                    </div>
+
+                                    <div>
+                                        <span>Interview</span>
+                                        <strong>{interviewCount}</strong>
+                                    </div>
+                                </div>
+
+
+                                <div className="status-summary-card rejected-card">
+                                    <div className="summary-icon">
+                                        ✕
+                                    </div>
+
+                                    <div>
+                                        <span>Rejected</span>
+                                        <strong>{rejectedCount}</strong>
+                                    </div>
+                                </div>
+
+
+                                <div className="status-summary-card hired-card">
+                                    <div className="summary-icon">
+                                        ✓
+                                    </div>
+
+                                    <div>
+                                        <span>Hired</span>
+                                        <strong>{hiredCount}</strong>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            {/* BAR CHART */}
+
+                            <div className="applicant-chart-card">
+
+                                <div className="chart-title">
+                                    <div>
+                                        <h3>
+                                            Application Status
+                                        </h3>
+
+                                        <p>
+                                            Candidate distribution by status
+                                        </p>
+                                    </div>
+                                </div>
+
+
+                                <div className="applicant-bar-chart">
+
+                                    {[
+                                        {
+                                            label: "Applied",
+                                            value: appliedCount,
+                                            className: "chart-applied",
+                                        },
+                                        {
+                                            label: "Under Review",
+                                            value: underReviewCount,
+                                            className: "chart-review",
+                                        },
+                                        {
+                                            label: "Shortlisted",
+                                            value: shortlistedCount,
+                                            className: "chart-shortlisted",
+                                        },
+                                        {
+                                            label: "Interview",
+                                            value: interviewCount,
+                                            className: "chart-interview",
+                                        },
+                                        {
+                                            label: "Rejected",
+                                            value: rejectedCount,
+                                            className: "chart-rejected",
+                                        },
+                                        {
+                                            label: "Hired",
+                                            value: hiredCount,
+                                            className: "chart-hired",
+                                        },
+                                    ].map((item) => {
+
+                                        const percentage =
+                                            applicants.length > 0
+                                                ? Math.round(
+                                                    (item.value /
+                                                        applicants.length) *
+                                                    100
+                                                )
+                                                : 0;
+
+                                        return (
+                                            <div
+                                                className="chart-row"
+                                                key={item.label}
+                                            >
+
+                                                <div className="chart-label">
+                                                    <span>
+                                                        {item.label}
+                                                    </span>
+
+                                                    <strong>
+                                                        {item.value}
+                                                    </strong>
+                                                </div>
+
+
+                                                <div className="chart-track">
+
+                                                    <div
+                                                        className={`chart-bar ${item.className}`}
+                                                        style={{
+                                                            width: `${percentage}%`,
+                                                        }}
+                                                    />
+
+                                                </div>
+
+
+                                                <span className="chart-percentage">
+                                                    {percentage}%
+                                                </span>
+
+                                            </div>
+                                        );
+
+                                    })}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </section>
+                )}
 
 
                 {/* ERROR */}
@@ -883,7 +1099,7 @@ function Applicants() {
                                         CANDIDATE
                                     </div>
 
-                                    
+
 
                                     <div>
                                         APPLIED
@@ -984,7 +1200,7 @@ function Applicants() {
                                                 </div>
 
 
-                                                
+
 
 
                                                 {/* APPLIED */}

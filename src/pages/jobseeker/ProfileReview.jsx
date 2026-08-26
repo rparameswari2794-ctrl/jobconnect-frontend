@@ -53,7 +53,6 @@ function ProfileReview() {
             setLoading(true);
             setError("");
 
-
             const response =
                 await fetch(
                     PROFILE_API,
@@ -126,56 +125,87 @@ function ProfileReview() {
         console.log("SUBMIT BUTTON CLICKED");
         console.log("=================================");
 
-        const token = localStorage.getItem("jc_token");
+        const token =
+            localStorage.getItem("jc_token");
 
-        console.log("TOKEN EXISTS:", !!token);
-        console.log("SUBMIT URL:", SUBMIT_API);
+        console.log(
+            "TOKEN EXISTS:",
+            !!token
+        );
+
+        console.log(
+            "SUBMIT URL:",
+            SUBMIT_API
+        );
+
 
         if (!token) {
-            navigate("/login", { replace: true });
+
+            navigate(
+                "/login",
+                { replace: true }
+            );
+
             return;
         }
+
 
         try {
 
             setSubmitting(true);
             setError("");
 
-            console.log("STARTING POST REQUEST...");
 
-            const response = await fetch(
-                SUBMIT_API,
-                {
-                    method: "POST",
-
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json",
-                        Accept: "application/json",
-                    },
-
-                    body: JSON.stringify({}),
-                }
+            console.log(
+                "STARTING POST REQUEST..."
             );
+
+
+            const response =
+                await fetch(
+                    SUBMIT_API,
+                    {
+                        method: "POST",
+
+                        headers: {
+                            Authorization:
+                                `Bearer ${token}`,
+
+                            "Content-Type":
+                                "application/json",
+
+                            Accept:
+                                "application/json",
+                        },
+
+                        body:
+                            JSON.stringify({}),
+                    }
+                );
+
 
             console.log(
                 "POST REQUEST COMPLETED"
             );
+
 
             console.log(
                 "RESPONSE STATUS:",
                 response.status
             );
 
+
             const data =
                 await response
                     .json()
                     .catch(() => ({}));
 
+
             console.log(
                 "RESPONSE DATA:",
                 data
             );
+
 
             // =================================================
             // IMPORTANT: SHOW ALL DJANGO ERRORS
@@ -186,34 +216,46 @@ function ProfileReview() {
                 let errorMessage =
                     "Unable to submit profile.";
 
+
                 if (data.detail) {
+
                     errorMessage =
                         Array.isArray(data.detail)
                             ? data.detail.join(", ")
                             : String(data.detail);
+
                 }
 
                 else if (data.message) {
+
                     errorMessage =
                         Array.isArray(data.message)
                             ? data.message.join(", ")
                             : String(data.message);
+
                 }
 
-                else if (typeof data === "object") {
+                else if (
+                    typeof data === "object"
+                ) {
 
                     const messages = [];
+
 
                     Object.entries(data).forEach(
                         ([field, value]) => {
 
-                            if (Array.isArray(value)) {
+                            if (
+                                Array.isArray(value)
+                            ) {
 
                                 messages.push(
                                     `${field}: ${value.join(", ")}`
                                 );
 
-                            } else if (
+                            }
+
+                            else if (
                                 typeof value === "object" &&
                                 value !== null
                             ) {
@@ -222,29 +264,45 @@ function ProfileReview() {
                                     `${field}: ${JSON.stringify(value)}`
                                 );
 
-                            } else {
+                            }
+
+                            else {
 
                                 messages.push(
                                     `${field}: ${value}`
                                 );
+
                             }
+
                         }
                     );
 
-                    if (messages.length > 0) {
+
+                    if (
+                        messages.length > 0
+                    ) {
+
                         errorMessage =
                             messages.join(" | ");
+
                     }
+
                 }
 
-                throw new Error(errorMessage);
+
+                throw new Error(
+                    errorMessage
+                );
             }
+
 
             console.log(
                 "PROFILE SUBMITTED SUCCESSFULLY"
             );
 
+
             setShowSuccess(true);
+
 
         } catch (err) {
 
@@ -253,14 +311,17 @@ function ProfileReview() {
                 err
             );
 
+
             setError(
                 err.message ||
                 "Unable to submit your profile."
             );
 
+
         } finally {
 
             setSubmitting(false);
+
         }
     }
 
@@ -273,18 +334,12 @@ function ProfileReview() {
 
         setShowSuccess(false);
 
-        /*
-         * Go to the normal profile page.
-         *
-         * Profile page will fetch the database again.
-         * Since approval_status is now pending,
-         * it will show the frozen/locked profile.
-         */
 
         navigate(
             "/jobseeker/profile",
             {
                 replace: true,
+
                 state: {
                     profileSubmitted: true,
                 },
@@ -300,6 +355,7 @@ function ProfileReview() {
     if (loading) {
 
         return (
+
             <div className="profile-review-page">
 
                 <main className="profile-review-main">
@@ -324,6 +380,7 @@ function ProfileReview() {
     if (error) {
 
         return (
+
             <div className="profile-review-page">
 
                 <main className="profile-review-main">
@@ -348,6 +405,7 @@ function ProfileReview() {
     if (!profile) {
 
         return (
+
             <div className="profile-review-page">
 
                 <main className="profile-review-main">
@@ -403,6 +461,80 @@ function ProfileReview() {
 
     const isRejected =
         profile.approval_status === "rejected";
+
+
+    // =====================================================
+    // PROFILE COMPLETION
+    // =====================================================
+
+    const completionItems = [
+
+        Boolean(
+            profile.full_name
+        ),
+
+        Boolean(
+            profile.phone
+        ),
+
+        Boolean(
+            profile.email
+        ),
+
+        Boolean(
+            profile.location
+        ),
+
+        Boolean(
+            profile.linkedin
+        ),
+
+        Boolean(
+            profile.headline
+        ),
+
+        Boolean(
+            profile.skills
+        ),
+
+        education.length > 0,
+
+        experiences.length > 0,
+
+        projects.length > 0,
+
+        Boolean(
+            profile.profile_photo
+        ),
+
+        Boolean(
+            profile.resume
+        ),
+
+        Boolean(
+            profile.aadhaar
+        ),
+
+    ];
+
+
+    const completedItems =
+        completionItems.filter(
+            Boolean
+        ).length;
+
+
+    const totalItems =
+        completionItems.length;
+
+
+    const profileCompletion =
+        Math.round(
+            (
+                completedItems /
+                totalItems
+            ) * 100
+        );
 
 
     // =====================================================
@@ -575,6 +707,77 @@ function ProfileReview() {
 
 
                 {/* =================================================
+                    PROFILE COMPLETION CHART
+                ================================================= */}
+
+                <section className="profile-completion-card">
+
+                    <div className="completion-chart-wrapper">
+
+                        <div
+                            className="completion-donut"
+                            style={{
+                                "--completion":
+                                    `${profileCompletion * 3.6}deg`
+                            }}
+                        >
+
+                            <div className="completion-donut-inner">
+
+                                <strong>
+                                    {profileCompletion}%
+                                </strong>
+
+                                <span>
+                                    Complete
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div className="completion-content">
+
+                        <h2>
+                            Profile Completion
+                        </h2>
+
+                        <p>
+                            Your profile is{" "}
+                            <strong>
+                                {profileCompletion}%
+                            </strong>{" "}
+                            complete.
+                        </p>
+
+                        <div className="completion-progress">
+
+                            <div
+                                className="completion-progress-fill"
+                                style={{
+                                    width:
+                                        `${profileCompletion}%`
+                                }}
+                            />
+
+                        </div>
+
+                        <span className="completion-count">
+
+                            {completedItems} of{" "}
+                            {totalItems} sections completed
+
+                        </span>
+
+                    </div>
+
+                </section>
+
+
+                {/* =================================================
                     STATUS
                 ================================================= */}
 
@@ -601,6 +804,7 @@ function ProfileReview() {
                         {isPending && (
 
                             <>
+
                                 <h2>
                                     Profile submitted
                                 </h2>
@@ -613,6 +817,7 @@ function ProfileReview() {
                                 <span className="pending-badge">
                                     Pending Verification
                                 </span>
+
                             </>
 
                         )}
@@ -621,6 +826,7 @@ function ProfileReview() {
                         {isApproved && (
 
                             <>
+
                                 <h2>
                                     Profile Approved
                                 </h2>
@@ -633,6 +839,7 @@ function ProfileReview() {
                                 <span className="approved-badge">
                                     Approved
                                 </span>
+
                             </>
 
                         )}
@@ -641,6 +848,7 @@ function ProfileReview() {
                         {isRejected && (
 
                             <>
+
                                 <h2>
                                     Profile Rejected
                                 </h2>
@@ -654,6 +862,7 @@ function ProfileReview() {
                                 <span className="rejected-badge">
                                     Rejected
                                 </span>
+
                             </>
 
                         )}
@@ -664,6 +873,7 @@ function ProfileReview() {
                             !isRejected && (
 
                                 <>
+
                                     <h2>
                                         Review Your Profile
                                     </h2>
@@ -673,6 +883,7 @@ function ProfileReview() {
                                         details before submitting
                                         for verification.
                                     </p>
+
                                 </>
 
                             )}
@@ -865,26 +1076,31 @@ function ProfileReview() {
 
 
                                 <p>
+
                                     <strong>
                                         University:
                                     </strong>{" "}
 
                                     {item.university ||
                                         "Not provided"}
+
                                 </p>
 
 
                                 <p>
+
                                     <strong>
                                         College:
                                     </strong>{" "}
 
                                     {item.college ||
                                         "Not provided"}
+
                                 </p>
 
 
                                 <p>
+
                                     <strong>
                                         Passing:
                                     </strong>{" "}
@@ -892,16 +1108,19 @@ function ProfileReview() {
                                     {item.passing_month_year ||
                                         item.end_year ||
                                         "Not provided"}
+
                                 </p>
 
 
                                 <p>
+
                                     <strong>
                                         Percentage / CGPA:
                                     </strong>{" "}
 
                                     {item.percentage_cgpa ||
                                         "Not provided"}
+
                                 </p>
 
                             </div>
@@ -950,26 +1169,31 @@ function ProfileReview() {
 
 
                                 <p>
+
                                     <strong>
                                         Company:
                                     </strong>{" "}
 
                                     {item.company ||
                                         "Not provided"}
+
                                 </p>
 
 
                                 <p>
+
                                     <strong>
                                         Employment Type:
                                     </strong>{" "}
 
                                     {item.employment_type ||
                                         "Not provided"}
+
                                 </p>
 
 
                                 <p>
+
                                     <strong>
                                         Duration:
                                     </strong>{" "}
@@ -981,6 +1205,7 @@ function ProfileReview() {
                                     {item.is_current
                                         ? "Present"
                                         : item.end_date || ""}
+
                                 </p>
 
 
@@ -1014,8 +1239,8 @@ function ProfileReview() {
 
 
                 {/* =================================================
-    PROJECTS
-================================================= */}
+                    PROJECTS
+                ================================================= */}
 
                 <section className="profile-section">
 
@@ -1037,16 +1262,12 @@ function ProfileReview() {
                                 key={item.id}
                             >
 
-                                {/* PROJECT TITLE */}
-
                                 <h3>
                                     {item.title ||
                                         item.name ||
                                         "Project"}
                                 </h3>
 
-
-                                {/* PROJECT TYPE */}
 
                                 <p>
 
@@ -1060,8 +1281,6 @@ function ProfileReview() {
                                 </p>
 
 
-                                {/* TECHNOLOGIES */}
-
                                 <p>
 
                                     <strong>
@@ -1073,8 +1292,6 @@ function ProfileReview() {
 
                                 </p>
 
-
-                                {/* PROJECT URL */}
 
                                 <p>
 
@@ -1101,8 +1318,6 @@ function ProfileReview() {
                                 </p>
 
 
-                                {/* DESCRIPTION */}
-
                                 <p>
 
                                     <strong>
@@ -1127,6 +1342,7 @@ function ProfileReview() {
                     )}
 
                 </section>
+
 
                 {/* =================================================
                     SUBMIT BUTTON
